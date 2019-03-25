@@ -1,0 +1,22 @@
+<svelte:head>
+  <title>{status} | {config.title}</title>
+</svelte:head>
+
+<h1>{status}</h1>
+
+<p>{error.message}</p>
+
+{#if dev && error.stack}
+  <pre class="whitespace-pre-wrap">{error.stack}</pre>
+{/if}
+
+<script>
+  import config from "../config"
+
+  export default {
+    helpers: {
+      config,
+      dev: process.env.NODE_ENV === "development",
+    },
+  }
+</script>
