@@ -68,17 +68,6 @@ module.exports = {
     module: {
       rules: [
         {
-          test: /\.html$/,
-          use: {
-            loader: "svelte-loader",
-            options: {
-              css: false,
-              dev,
-              generate: "ssr",
-            },
-          },
-        },
-        {
           test: /\.(css)$/,
           use: [
             MiniCssExtractPlugin.loader,
@@ -103,6 +92,17 @@ module.exports = {
               },
             },
           ],
+        },
+        {
+          test: /\.html$/,
+          use: {
+            loader: "svelte-loader",
+            options: {
+              css: false,
+              dev,
+              generate: "ssr",
+            },
+          },
         },
       ],
     },

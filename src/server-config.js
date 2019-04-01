@@ -1,6 +1,13 @@
 import { validateServerConfig } from "./validators/server-config"
 
 const serverConfig = {
+  db: {
+    database: process.env.TRICOTEUSES_DB_NAME || "favre",
+    host: process.env.TRICOTEUSES_DB_HOST || "localhost",
+    password: process.env.TRICOTEUSES_DB_PASSWORD || "favre", // Change it!
+    port: process.env.TRICOTEUSES_DB_PORT || 5432,
+    user: process.env.TRICOTEUSES_DB_USER || "favre",
+  },
   gitlab: {
     url: "https://gitlab.huma-num.fr/",
     accessToken: "ACCESS_TOKEN", // Change it!

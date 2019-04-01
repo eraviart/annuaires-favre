@@ -15,7 +15,39 @@ Edit `src/server-config.js` to change database informations. Then
 npm install
 ```
 
-## Launch server
+### Database Creation
+
+When using _Debian GNU/Linux_:
+
+```bash
+su - postgres
+createuser -D -P -R -S favre
+  Enter password for new role: favre
+  Enter it again: favre
+createdb -E utf-8 -O favre favre
+```
+
+### Server Configuration
+
+```bash
+npm run configure
+```
+
+### Database Initialization
+
+Two alternatives:
+
+#### Initialize database from DFIH Oracle database
+
+```bash
+npx babel-node src/scripts/import_dfih_territories.js
+```
+
+#### Restore database from PostgreSQL dump
+
+TODO
+
+## Server Launch
 
 In development mode:
 

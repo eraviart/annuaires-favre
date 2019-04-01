@@ -1,6 +1,6 @@
 module.exports = {
   "presets": [
-      "@babel/preset-env",
+    "@babel/preset-env",
   ],
   "plugins": [
     "@babel/plugin-proposal-class-properties",
@@ -19,6 +19,7 @@ module.exports = {
     "@babel/plugin-proposal-logical-assignment-operators",
     "@babel/plugin-proposal-nullish-coalescing-operator",
     "@babel/plugin-proposal-numeric-separator",
+    "@babel/proposal-object-rest-spread",
     "@babel/plugin-proposal-optional-chaining",
     [
       "@babel/plugin-proposal-pipeline-operator",
