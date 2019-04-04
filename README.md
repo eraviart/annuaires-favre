@@ -25,6 +25,10 @@ createuser -D -P -R -S favre
   Enter password for new role: favre
   Enter it again: favre
 createdb -E utf-8 -O favre favre
+
+psql favre
+CREATE EXTENSION IF NOT EXISTS pg_trgm;
+exit
 ```
 
 ### Server Configuration
@@ -41,6 +45,7 @@ Two alternatives:
 
 ```bash
 npx babel-node src/scripts/import_dfih_territories.js
+npx babel-node src/scripts/import_dfih_corporations.js
 ```
 
 #### Restore database from PostgreSQL dump

@@ -40,43 +40,23 @@ passport.serializeUser(function(user, done) {
 passport.use(
   new LocalStrategy(
     {
-      usernameField: "email",
+      usernameField: "username",
       passwordField: "password",
     },
     async function(username, password, done) {
-      let user
-      if (username.indexOf("@") >= 0) {
-        user = entryToUser(
-          await db.oneOrNone(
-            `
-              SELECT * FROM users
-              WHERE email = $1
-            `,
-            username
-          )
+      const user = entryToUser(
+        await db.oneOrNone(
+          `
+            SELECT * FROM users
+            WHERE name = $1
+          `,
+          username
         )
-        if (user === null) {
-          return done(null, false, { username: `No user with email "${username}".` })
-        }
-      } else {
-        let slug = slugify(username)
-        user = entryToUser(
-          await db.oneOrNone(
-            `
-              SELECT * FROM users
-              WHERE slug = $1
-            `,
-            slug
-          )
-        )
-        if (user === null) {
-          return done(null, false, { username: `No user with name "${slug}".` })
-        }
+      )
+      if (user === null) {
+        return done(null, false, { username: `No user with name "${username}".` })
       }
-      let passwordDigest = pbkdf2Sync(password, user.salt, 4096, 16, "sha512")
-        .toString("base64")
-        .replace(/=/g, "")
-      if (passwordDigest != user.passwordDigest) {
+      if (password != user.password) {
         return done(null, false, { password: `Invalid password for user "${username}".` })
       }
 

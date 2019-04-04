@@ -28,12 +28,3 @@ export async function createPool() {
     throw error
   }
 }
-
-export function objectsFromSqlResult({ metaData, rows }) {
-  return rows.map(row => {
-    return metaData.map((keyInfo, index) => [keyInfo.name, row[index]]).reduce((accumulator, [key, value]) => {
-      accumulator[key.toLowerCase()] = value
-      return accumulator
-    }, {})
-  })
-}

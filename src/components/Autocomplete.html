@@ -1,0 +1,149 @@
+<svelte:window on:click="windowOnClick(event)" on:keydown="windowOnKeyDown(event)" />
+
+<div on:click="event.stopPropagation()">
+  <input
+    autocomplete="off"
+    class="{class}"
+    {disabled}
+    {placeholder}
+    {required}
+    on:blur="fire('blur', event)"
+    on:focus="fire('focus', event)"
+    on:input="onInput(event)"
+    on:keydown="onKeyDown(event)"
+    ref:input
+    type="text"
+    value="{name}"
+  >
+  <ul class="autocomplete-results{isOpen ? '' : ' hidden'}" ref:list>
+    {#each results as result, index}
+      <li class="autocomplete-result{ index === selectedResultIndex ? ' is-active' : '' } list-reset" on:click="close(index)">
+        {@html result.label}
+      </li>
+    {/each}
+  </ul>
+  {#if isLoading}
+    <slot>
+      <p class="fallback">Chargement des données en cours...</p>
+    </slot>
+  {/if}
+</div>
+
+<script>
+  import { slugify } from "../strings"
+
+  const regExpEscape = (s) => {
+    return s.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&")
+  }
+
+  export default {
+    data() {
+      return {
+        class: "",
+        disabled: false,
+        fromStart: true, // Default type ahead
+        id: "",
+        isAsync: false,
+        isLoading: false,
+        isOpen: false,
+        items: [],
+        maxItems: 10,
+        minChar: 2,
+        name: "",
+        placeholder: "",
+        required: false,
+        results: [],
+        selectedResultIndex: 0,
+      }
+    },
+    methods: {
+      close(index) {
+        this.set({ isOpen: false, selectedResultIndex: -1 })
+        this.refs.input.blur()
+        const { results } = this.get()
+        const { id, name } = results[index]
+        this.set({ id, name })
+        this.fire("select", results[index])
+      },
+      filterResults() {
+        const { items, name, fromStart, maxItems } = this.get()
+        const results = items
+          // .filter(item => {
+          //   const itemName = typeof item === "string" ? item : item.name
+          //   return fromStart
+          //     ? slugify(itemName).startsWith(slugify(name))
+          //     : slugify(itemName).includes(slugify(name))
+          // })
+          .map(item => {
+            const itemName = typeof item !== "string" ? item.name : item
+            return {
+              id: item.id || item,
+              label: name.trim() === "" ? itemName : itemName.replace(RegExp(regExpEscape(name.trim()), "i"), "<span>$&</span>"),
+              name: itemName,
+            }
+          })
+        this.set({ results })
+
+        const height = results.length > maxItems ? maxItems : results.length
+        this.refs.list.style.height = `${height * 2.25}rem`
+      },
+      async onInput(event) {
+        const { isAsync, minChar, name } = this.get()
+        this.fire("input", name)
+
+        if (isAsync) {
+          this.set({ isLoading: true })
+        } else if (name.length >= Number(minChar)) {
+          this.filterResults()
+          this.set({ isOpen: true })
+        }
+      },
+      onKeyDown(event) {
+        let { selectedResultIndex, results } = this.get()
+
+        if (event.keyCode === 40 && selectedResultIndex < results.length) {
+          // Arrow Down
+          this.set({ selectedResultIndex: selectedResultIndex + 1 })
+        } else if (event.keyCode === 38 && selectedResultIndex > 0) {
+          // Arrow Up
+          this.set({ selectedResultIndex: selectedResultIndex - 1 })
+        } else if (event.keyCode === 13) {
+          // Enter
+          event.preventDefault()
+          if (selectedResultIndex === -1) {
+            selectedResultIndex = 0 // Default select first item of list
+          }
+          this.close(selectedResultIndex)
+        } else if (event.keyCode === 27) {
+          // Escape
+          event.preventDefault()
+          this.set({ id: "", isOpen: false, name: "", selectedResultIndex: -1 })
+          this.refs.input.blur()
+        }
+      },
+      windowOnClick(event) {
+        if (this.get().isOpen) {
+          this.set({ id: "", isOpen: false, name: "", selectedResultIndex: -1 })
+          this.refs.input.blur()
+        }
+      },
+      windowOnKeyDown(event) {
+        if (event.keyCode === 27) {
+          // Close autocompleter when escape is pressed.
+          this.set({ id: "", isOpen: false, name: "", selectedResultIndex: -1 })
+          this.refs.input.blur()
+        }
+      },
+    },
+    onupdate({ changed, current }) {
+      if (this.get().isAsync && changed.items && current.items.length) {
+        this.set({
+          items: current.items,
+          isLoading: false,
+          isOpen: current.items.length > 0,
+        })
+        this.filterResults()
+      }
+    },
+  }
+</script>

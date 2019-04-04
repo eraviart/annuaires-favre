@@ -1,60 +1,69 @@
-import { pbkdf2Sync, randomBytes } from "crypto"
-
 import { db } from "../../database"
 import { toUserJson } from "../../model/users"
-import { slugify } from "../../strings"
+import {
+  validateNonEmptyTrimmedString,
+} from "../../validators/core"
 
 export async function post(req, res) {
-  const { email, password, username } = req.body
-  const errors = {}
-
-  if ((await db.one("SELECT EXISTS (SELECT 1 FROM users WHERE email = $1)", email)).exists) {
-    errors["email"] = "An user with the same email address already exists."
+  let [body, errors] = validateBody(req.body)
+  if (errors !== null) {
+    res.setHeader("Content-Type", "application/json; charset=utf-8")
+    return res.end(JSON.stringify({ errors }, null, 2))
   }
-  const slug = slugify(username)
-  if (!slug) {
-    errors["username"] = "Username must contain at least one alphanumerical character."
-  } else if ((await db.one("SELECT EXISTS (SELECT 1 FROM users WHERE slug = $1)", slug)).exists) {
+
+  const { password, username } = body
+
+  errors = {}
+  if ((await db.one("SELECT EXISTS (SELECT 1 FROM users WHERE name = $1)", username)).exists) {
     errors["username"] = "An user with the same name already exists."
   }
-
   if (Object.keys(errors).length > 0) {
     res.setHeader("Content-Type", "application/json; charset=utf-8")
     return res.end(JSON.stringify({ errors }, null, 2))
   }
 
   const user = {
-    apiKey: null,
-    email,
     name: username,
-    passwordDigest: null,
-    salt: null,
-    slug,
-  }
-
-  if (password) {
-    user.apiKey = randomBytes(16)
-      .toString("base64")
-      .replace(/=/g, "") // 128 bits API key
-    // See http://security.stackexchange.com/a/27971 for explaination of digest and salt size.
-    user.salt = randomBytes(16)
-      .toString("base64")
-      .replace(/=/g, "")
-    user.passwordDigest = pbkdf2Sync(password, user.salt, 4096, 16, "sha512")
-      .toString("base64")
-      .replace(/=/g, "")
+    password,
   }
 
   const result = await db.one(
-    `INSERT INTO users(api_key, email, name, password_digest, salt, slug)
-      VALUES ($<apiKey>, $<email>, $<name>, $<passwordDigest>, $<salt>, $<slug>)
-      RETURNING activated, id, is_admin`,
+    `INSERT INTO users(name, password)
+      VALUES ($<name>, $<password>)
+      RETURNING id, is_admin`,
     user
   )
-  user.activated = result.activated
   user.id = result.id
   user.isAdmin = result.is_admin
-  // TODO: Convert user to JSON and remove secret attributes.
   res.setHeader("Content-Type", "application/json; charset=utf-8")
-  return res.end(JSON.stringify(toUserJson(user, { showApiKey: true, showEmail: true }), null, 2))
+  return res.end(JSON.stringify(toUserJson(user), null, 2))
+}
+
+function validateBody(body) {
+  if (body === null || body === undefined) {
+    return [body, "Missing body"]
+  }
+  if (typeof body !== "object") {
+    return [body, `Expected an object, got ${typeof body}`]
+  }
+
+  body = {
+    ...body,
+  }
+  const remainingKeys = new Set(Object.keys(body))
+  const errors = {}
+
+  for (let key of ["password", "username"]) {
+    remainingKeys.delete(key)
+    const [value, error] = validateNonEmptyTrimmedString(body[key])
+    body[key] = value
+    if (error !== null) {
+      errors[key] = error
+    }
+  }
+
+  for (let key of remainingKeys) {
+    errors[key] = "Unexpected entry"
+  }
+  return [body, Object.keys(errors).length === 0 ? null : errors]
 }

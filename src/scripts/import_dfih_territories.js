@@ -1,6 +1,4 @@
-import oracledb from "oracledb"
-
-import { createPool, objectsFromSqlResult } from "../oracle"
+import { createPool } from "../oracle"
 import { db } from "../database"
 
 let pool = null
@@ -11,19 +9,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             id,
             startdate,
             enddate,
             iso_code,
             source
-          from countries
+          FROM countries
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into countries values ($1, $2, $3, $4, $5)
+            INSERT INTO countries VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )
@@ -33,19 +31,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             country,
             name,
             startdate,
             enddate,
             source
-          from country_names
+          FROM country_names
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into country_names values ($1, $2, $3, $4, $5)
+            INSERT INTO country_names VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )
@@ -55,19 +53,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             id,
             startdate,
             enddate,
             postal_code,
             source
-          from districts
+          FROM districts
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into districts values ($1, $2, $3, $4, $5)
+            INSERT INTO districts VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )
@@ -77,19 +75,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             district_id,
             country_id,
             startdate,
             enddate,
             source
-          from country_district
+          FROM country_district
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into country_district values ($1, $2, $3, $4, $5)
+            INSERT INTO country_district VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )
@@ -99,19 +97,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             district,
             name,
             startdate,
             enddate,
             source
-          from district_names
+          FROM district_names
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into district_names values ($1, $2, $3, $4, $5)
+            INSERT INTO district_names VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )
@@ -121,20 +119,20 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             id,
             startdate,
             enddate,
             insee_code_long,
             insee_code_short,
             source
-          from cities
+          FROM cities
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into cities values ($1, $2, $3, $4, $5, $6)
+            INSERT INTO cities VALUES ($1, $2, $3, $4, $5, $6)
           `,
           row,
         )
@@ -144,19 +142,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             district_id,
             city_id,
             startdate,
             enddate,
             source
-          from city_district
+          FROM city_district
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into city_district values ($1, $2, $3, $4, $5)
+            INSERT INTO city_district VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )
@@ -166,19 +164,19 @@ async function main() {
     {
       const rows = (await connection.execute(
         `
-          select
+          SELECT
             city,
             name,
             startdate,
             enddate,
             source
-          from city_names
+          FROM city_names
         `,
       )).rows
       for (let row of rows) {
         await db.none(
           `
-            insert into city_names values ($1, $2, $3, $4, $5)
+            INSERT INTO city_names VALUES ($1, $2, $3, $4, $5)
           `,
           row,
         )

@@ -9,14 +9,14 @@ export function post(req, res, next) {
     }
     if (!user) {
       res.setHeader("Content-Type", "application/json; charset=utf-8")
-      return res.end(JSON.stringify({ errors: info }))
+      return res.end(JSON.stringify({ errors: info }, null, 2))
     }
     req.login(user, function(err) {
       if (err) {
         return next(err)
       }
       res.setHeader("Content-Type", "application/json; charset=utf-8")
-      return res.end(JSON.stringify(toUserJson(user, { showApiKey: true, showEmail: true })))
+      return res.end(JSON.stringify(toUserJson(user), null, 2))
     })
   })(req, res, next)
 }
