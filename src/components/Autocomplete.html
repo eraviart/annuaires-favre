@@ -42,14 +42,14 @@
         class: "",
         disabled: false,
         fromStart: true, // Default type ahead
-        id: "",
+        id: null,
         isAsync: false,
         isLoading: false,
         isOpen: false,
         items: [],
         maxItems: 10,
         minChar: 2,
-        name: "",
+        name: null,
         placeholder: "",
         required: false,
         results: [],
@@ -76,9 +76,10 @@
           // })
           .map(item => {
             const itemName = typeof item !== "string" ? item.name : item
+            const nameTrimmed = name === null ? "" : name.trim()
             return {
               id: item.id || item,
-              label: name.trim() === "" ? itemName : itemName.replace(RegExp(regExpEscape(name.trim()), "i"), "<span>$&</span>"),
+              label: nameTrimmed === "" ? itemName : itemName.replace(RegExp(regExpEscape(nameTrimmed), "i"), "<span>$&</span>"),
               name: itemName,
             }
           })
@@ -88,7 +89,8 @@
         this.refs.list.style.height = `${height * 2.25}rem`
       },
       async onInput(event) {
-        const { isAsync, minChar, name } = this.get()
+        const name = event.target.value
+        const { isAsync, minChar } = this.get()
         this.fire("input", name)
 
         if (isAsync) {

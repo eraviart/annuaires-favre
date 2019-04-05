@@ -22,7 +22,13 @@
     <tbody>
       {#each lines as line}
         <tr class={line.id === lineId ? "bg-black text-white" : ""} on:click="toggleSelectLine(line)">
-          <td><input checked={line.id === lineId} name="lineId" type="radio" value={line.id}></td>
+          <td>
+            {#if line.id === null}
+              …
+            {:else}
+              <input checked={line.id === lineId} name="lineId" type="radio" value={line.id}>
+            {/if}
+          </td>
           <td>{line.userName}</td>
           <td>{line.year}</td>
           <td>{line.page}</td>
@@ -198,6 +204,13 @@
       districtSelected(item) {
         this.set({ districtId: Number(item.id), districtName: item.name })
       },
+      resetLineForm() {
+        this.set({
+          comment: null,
+          lineId: null,
+          temporary: false,
+        })
+      },
       async submitForm(event) {
         event.preventDefault()
 
@@ -210,10 +223,29 @@
           districtId,
           districtName,
           lineId,
+          lines,
           page,
           temporary,
           year,
         } = this.get()
+        const { user } = this.store.get()
+        const upsertedLine = {
+          id: lineId,
+          cityId,
+          cityName,
+          comment,
+          corporationId,
+          corporationName,
+          districtId,
+          districtName,
+          page,
+          temporary,
+          userId: user.id,
+          userName: user.name,
+          year: year,
+        }
+        const updatedLines = [...lines, upsertedLine]
+        this.set({ lines: updatedLines })
         const response = await fetch("upsert_line", {
           body: JSON.stringify({
             cityId,
@@ -240,10 +272,17 @@
             : { error: { code: response.status, message: response.statusText } }
         if (result.error) {
           console.log(result.error.code, result.error.message)
+        } else {
+          upsertedLine.id = result.id // Also modifies updatedLines.
+          this.set({ lines: updatedLines })
+          this.resetLineForm()
         }
-        this.set({ ...result })
       },
       toggleSelectLine(line) {
+        if (line.id === null) {
+          // The line is currently being upserted, don't allow to select/unselect it.
+          return
+        }
         const { lineId } = this.get()
         if (lineId === null) {
           this.set({
@@ -260,11 +299,7 @@
             year: line.year,
           })
         } else {
-          this.set({
-            comment: null,
-            lineId: null,
-            temporary: false,
-          })
+          this.resetLineForm()
         }
       },
     },
@@ -283,10 +318,10 @@
       const lines = await response.json()
       this.set({ lines })
     },
-    async preload(/* { params, query } */) {
-      const { user } = this.store.get()
-      // TODO: Handle when user doesn't exist.
-      return {}
-    },
+    // async preload(/* { params, query } */) {
+    //   const { user } = this.store.get()
+    //   // TODO: Handle when user doesn't exist.
+    //   return {}
+    // },
   }
 </script>
