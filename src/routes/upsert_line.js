@@ -54,10 +54,11 @@ export async function post(req, res) {
     )
   }
 
-  const { id } = await db.one(
-    `
-      INSERT INTO lines
-        (
+  const result = { ...body }
+  if (body.lineId === null) {
+    const { id } = await db.one(
+      `
+        INSERT INTO lines (
           city_id,
           city_name,
           comment,
@@ -88,20 +89,43 @@ export async function post(req, res) {
           current_timestamp
         )
         RETURNING id
-    `,
-    {
-      ...body,
-      userId: user.id,
-    },
-  )
+      `,
+      {
+        ...body,
+        userId: user.id,
+      },
+    )
+    result.id = id
+  } else {
+    await db.none(
+      `
+        UPDATE lines
+        SET
+          city_id = $<cityId>,
+          city_name = $<cityName>,
+          comment = $<comment>,
+          corporation_id = $<corporationId>,
+          corporation_name = $<corporationName>,
+          district_id = $<districtId>,
+          district_name = $<districtName>,
+          page = $<page>,
+          temporary = $<temporary>,
+          user_id = $<userId>,
+          year = $<year>,
+          updated_at = current_timestamp
+        WHERE id = $<lineId>
+      `,
+      {
+        ...body,
+        userId: user.id,
+      },
+    )
+  }
 
   res.writeHead(200, {
     "Content-Type": "application/json; charset=utf-8",
   })
-  res.end(JSON.stringify({
-    ...body,
-    id,
-  }, null, 2))
+  res.end(JSON.stringify(result, null, 2))
 }
 
 function validateBody(body) {

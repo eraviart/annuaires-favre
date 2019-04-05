@@ -76,6 +76,7 @@ export async function get(req, res) {
       FROM lines
       JOIN users ON lines.user_id = users.id
       ${whereClause}
+      ORDER BY lines.id
     `,
     {
       ...query,

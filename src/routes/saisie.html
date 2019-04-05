@@ -230,7 +230,7 @@
         } = this.get()
         const { user } = this.store.get()
         const upsertedLine = {
-          id: lineId,
+          id: null,  // null means in "upsert in progress".
           cityId,
           cityName,
           comment,
@@ -244,7 +244,14 @@
           userName: user.name,
           year: year,
         }
-        const updatedLines = [...lines, upsertedLine]
+        const updatedLines = [...lines]
+        if (lineId === null) {
+          updatedLines.push(upsertedLine)
+        } else {
+          const lineIndex = lines.findIndex(line => line.id === lineId)
+          assert(lineIndex >= 0)
+          updatedLines[lineIndex] = upsertedLine
+        }
         this.set({ lines: updatedLines })
         const response = await fetch("upsert_line", {
           body: JSON.stringify({
@@ -284,7 +291,7 @@
           return
         }
         const { lineId } = this.get()
-        if (lineId === null) {
+        if (lineId !== line.id) {
           this.set({
             cityId: line.cityId,
             cityName: line.cityName,
