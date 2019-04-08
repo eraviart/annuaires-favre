@@ -71,30 +71,42 @@
   >
     <div class="notification">Chargement des départements…</div>
   </Autocomplete>
-  <span
-    class="border leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
-  >{districtId || ""}</span>
-
   {#if districtId === null}
     <p class="bg-orange-dark border leading-tight px-3 py-2 rounded shadow text-white w-full">
       Un département est nécessaire au choix d'une localité.
     </p>
   {:else}
-    <Autocomplete
-      class="appearance-none border focus:outline-none focus:shadow-outline leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
-      isAsync
-      items="{cities}"
-      name={cityName}
-      on:input="autocompleteCity(event)"
-      on:select="citySelected(event)"
-      placeholder="Premières lettres d'une localité…"
-    >
-      <div class="notification">Chargement des localités…</div>
-    </Autocomplete>
+    <span
+      class="border leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
+    >{districtId || ""}</span>
   {/if}
-  <span
-    class="border leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
-  >{cityId || ""}</span>
+
+  <Autocomplete
+    class="appearance-none border focus:outline-none focus:shadow-outline leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
+    disabled={districtId === null}
+    isAsync
+    items="{cities}"
+    name={cityName}
+    on:input="autocompleteCity(event)"
+    on:select="citySelected(event)"
+    placeholder="Premières lettres d'une localité…"
+  >
+    <div class="notification">Chargement des localités…</div>
+  </Autocomplete>
+  {#if cityId === null}
+    {#if districtId !== null
+      && citySlug
+      && !cities.some(city => slugify(city.name) === citySlug)
+    }
+      <button on:click="createCity()" type="button">
+        Créer « {cityName} »
+      </button>
+    {/if}
+  {:else}
+    <span
+      class="border leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
+    >{cityId || ""}</span>
+  {/if}
 
   <Autocomplete
     class="appearance-none border focus:outline-none focus:shadow-outline leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
@@ -107,9 +119,19 @@
   >
     <div class="notification">Chargement des entreprises…</div>
   </Autocomplete>
-  <span
-    class="border leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
-  >{corporationId || ""}</span>
+  {#if corporationId === null}
+    {#if corporationSlug
+      && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)
+    }
+      <button on:click="createCorporation()" type="button">
+        Créer « {corporationName} »
+      </button>
+    {/if}
+  {:else}
+    <span
+      class="border leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
+    >{corporationId || ""}</span>
+  {/if}
 
   <label>
     <input bind:checked="temporary" type="checkbox">
@@ -138,10 +160,19 @@
   import fetch from "cross-fetch"
 
   import config from "../config"
+  import { slugify } from "../strings"
 
   export default {
     components: {
       Autocomplete: "../components/Autocomplete.html",
+    },
+    computed: {
+      citySlug({ cityName }) {
+        return cityName === null ? null : slugify(cityName)
+      },
+      corporationSlug({ corporationName }) {
+        return corporationName === null ? null : slugify(corporationName)
+      },
     },
     data() {
       return {
@@ -164,9 +195,11 @@
     },
     helpers: {
       config,
+      slugify,
     },
     methods: {
       async autocompleteCity(term) {
+        this.set({ cityId: null, cityName: term })
         const { districtId, year } = this.get()
         const response = await fetch(
           `autocomplete_city?district=${districtId}&q=${encodeURIComponent(term)}&year=${year}`,
@@ -179,6 +212,7 @@
         this.set({ cities })
       },
       async autocompleteCorporation(term) {
+        this.set({ corporationId: null, corporationName: term })
         const response = await fetch(`autocomplete_corporation?q=${encodeURIComponent(term)}`, {
           credentials: "same-origin",
         })
@@ -187,6 +221,7 @@
         this.set({ corporations })
       },
       async autocompleteDistrict(term) {
+        this.set({ districtId: null, districtName: term })
         const { year } = this.get()
         const response = await fetch(`autocomplete_district?q=${encodeURIComponent(term)}&year=${year}`, {
           credentials: "same-origin",
@@ -201,6 +236,57 @@
       corporationSelected(item) {
         this.set({ corporationId: Number(item.id), corporationName: item.name })
       },
+      async createCity() {
+        const { cityName, districtId, page, year } = this.get()
+        const response = await fetch("new_city", {
+          body: JSON.stringify({
+            cityName,
+            districtId,
+            page,
+            year,
+          }, null, 2),
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+          method: "POST",
+        })
+        const result =
+          response.ok || response.status === 400
+            ? await response.json()
+            : { error: { code: response.status, message: response.statusText } }
+        if (result.error) {
+          console.log(result.error.code, result.error.message)
+        } else {
+          this.set({ cityId: result.id })
+        }
+      },
+      async createCorporation() {
+        const { corporationName, page, year } = this.get()
+        // TODO: validate fields, before submitting them.
+
+        const response = await fetch("new_corporation", {
+          body: JSON.stringify({
+            corporationName,
+            page,
+            year,
+          }, null, 2),
+          credentials: "same-origin",
+          headers: {
+            "Content-Type": "application/json; charset=utf-8",
+          },
+          method: "POST",
+        })
+        const result =
+          response.ok || response.status === 400
+            ? await response.json()
+            : { error: { code: response.status, message: response.statusText } }
+        if (result.error) {
+          console.log(result.error.code, result.error.message)
+        } else {
+          this.set({ corporationId: result.id })
+        }
+      },
       districtSelected(item) {
         this.set({ districtId: Number(item.id), districtName: item.name })
       },
@@ -214,6 +300,7 @@
       async submitForm(event) {
         event.preventDefault()
 
+        // TODO: Validate form before sending it.
         const {
           cityId,
           cityName,

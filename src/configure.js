@@ -90,6 +90,19 @@ async function configureDatabase() {
     `
   )
 
+  // Table: dummy_corporations
+  await db.none(
+    `
+      CREATE TABLE IF NOT EXISTS dummy_corporations(
+        corporation_id integer NOT NULL PRIMARY KEY REFERENCES corporations(id),
+        created_at timestamp without time zone NOT NULL,
+        page integer NOT NULL,
+        user_id integer NOT NULL REFERENCES users(id),
+        year integer NOT NULL
+      )
+    `
+  )
+
   // Table: countries
   await db.none(
     `
@@ -216,6 +229,19 @@ async function configureDatabase() {
       CREATE INDEX IF NOT EXISTS city_names_trigrams_idx
         ON city_names
         USING GIST (name gist_trgm_ops)
+    `
+  )
+
+  // Table: dummy_cities
+  await db.none(
+    `
+      CREATE TABLE IF NOT EXISTS dummy_cities(
+        city_id integer NOT NULL PRIMARY KEY REFERENCES cities(id),
+        created_at timestamp without time zone NOT NULL,
+        page integer NOT NULL,
+        user_id integer NOT NULL REFERENCES users(id),
+        year integer NOT NULL
+      )
     `
   )
 

@@ -121,20 +121,20 @@
         } else if (event.keyCode === 27) {
           // Escape
           event.preventDefault()
-          this.set({ id: "", isOpen: false, name: "", selectedResultIndex: -1 })
+          this.set({ id: null, isOpen: false, selectedResultIndex: -1 })
           this.refs.input.blur()
         }
       },
       windowOnClick(event) {
         if (this.get().isOpen) {
-          this.set({ id: "", isOpen: false, name: "", selectedResultIndex: -1 })
+          this.set({ id: null, isOpen: false, selectedResultIndex: -1 })
           this.refs.input.blur()
         }
       },
       windowOnKeyDown(event) {
         if (event.keyCode === 27) {
           // Close autocompleter when escape is pressed.
-          this.set({ id: "", isOpen: false, name: "", selectedResultIndex: -1 })
+          this.set({ id: null, isOpen: false, selectedResultIndex: -1 })
           this.refs.input.blur()
         }
       },
