@@ -69,24 +69,26 @@
         const { items, name, fromStart, maxItems } = this.get()
         const results = items
           // .filter(item => {
-          //   const itemName = typeof item === "string" ? item : item.name
           //   return fromStart
-          //     ? slugify(itemName).startsWith(slugify(name))
-          //     : slugify(itemName).includes(slugify(name))
+          //     ? slugify(item.name).startsWith(slugify(name))
+          //     : slugify(item.name).includes(slugify(name))
           // })
           .map(item => {
-            const itemName = typeof item !== "string" ? item.name : item
             const nameTrimmed = name === null ? "" : name.trim()
+            const itemNameHighlighted =
+              nameTrimmed === ""
+                ? item.name
+                : item.name.replace(RegExp(regExpEscape(nameTrimmed), "i"), "<b>$&</b>")
             return {
-              id: item.id || item,
-              label: nameTrimmed === "" ? itemName : itemName.replace(RegExp(regExpEscape(nameTrimmed), "i"), "<span>$&</span>"),
-              name: itemName,
+              id: item.id,
+              label: `${itemNameHighlighted} (${item.id})`,
+              name: item.name,
             }
           })
         this.set({ results })
 
-        const height = results.length > maxItems ? maxItems : results.length
-        this.refs.list.style.height = `${height * 2.25}rem`
+        // const height = results.length > maxItems ? maxItems : results.length
+        // this.refs.list.style.height = `${height * 2.25}rem`
       },
       async onInput(event) {
         const name = event.target.value
