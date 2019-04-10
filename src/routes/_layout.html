@@ -28,7 +28,7 @@
         {#each config.rightMenu as menuItem}
           <span class="inline-flex">
             <a
-              class="block border-b-2 flex-none mr-4 mt-4 no-underline pb-2 md:mt-0 hover:text-white {
+              class="block border-b-2 flex-none ml-4 mt-4 no-underline pb-2 md:mt-0 hover:text-white {
                 (child.segment || ".") === menuItem.url ? "text-teal-lighter" : "border-teal-darker text-teal-lightest"
               }"
               href="{menuItem.url || ""}"
@@ -39,15 +39,14 @@
             </a>
           </span>
         {/each}
-        {#if config.enableAuthentication}
-          <span class="inline-flex">
-            {#if $user}
-              <a class="block border-b-2 border-teal-darker mt-4 no-underline pb-2 text-teal-lightest md:inline-block md:mt-0 hover:text-white" href="logout" on:click="logout(event)">Déconnexion</a>
-            {:else}
-              <a class="block border-b-2 border-teal-darker mt-4 no-underline pb-2 text-teal-lightest md:inline-block md:mt-0 hover:text-white" href="login" rel="prefetch">Connexion</a>
-            {/if}
-          </span>
-        {/if}
+        <span class="inline-flex">
+          {#if $user}
+            <i class="ml-4 text-teal-lightest"><i class="fas fa-user"></i> {$user.name}</i>
+            <a class="block border-b-2 border-teal-darker ml-4 mt-4 no-underline pb-2 text-teal-lightest md:inline-block md:mt-0 hover:text-white" href="logout" on:click="logout(event)">Déconnexion</a>
+          {:else}
+            <a class="block border-b-2 border-teal-darker ml-4 mt-4 no-underline pb-2 text-teal-lightest md:inline-block md:mt-0 hover:text-white" href="login" rel="prefetch">Connexion</a>
+          {/if}
+        </span>
       </div>
     </div>
   </div>
