@@ -66,6 +66,19 @@ async function configureDatabase() {
       )
     `
   )
+  const { max: corporationsIdMax } = await db.one(
+    `
+      SELECT max(id) AS max
+      FROM corporations
+    `,
+  )
+  if (corporationsIdMax < 20000) {
+    await db.none(
+      `
+        ALTER SEQUENCE corporations_id_seq RESTART WITH 20000
+      `
+    )
+  }
 
   // Table: corporation_names
   // This is a merge between DFIH corporation_name & corporation_true_name.
@@ -218,6 +231,19 @@ async function configureDatabase() {
       )
     `
   )
+  const { max: citiesIdMax } = await db.one(
+    `
+      SELECT max(id) AS max
+      FROM cities
+    `,
+  )
+  if (citiesIdMax < 70000) {
+    await db.none(
+      `
+        ALTER SEQUENCE cities_id_seq RESTART WITH 70000
+      `
+    )
+  }
 
   // Table: city_district
   await db.none(
