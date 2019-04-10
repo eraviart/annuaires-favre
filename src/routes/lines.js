@@ -129,7 +129,7 @@ function validateQuery(query) {
         validateString,
         numberFromString,
         validateInteger,
-        validateTest(value => value >= 0, "Expected a positive or zero integer"),
+        validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
       ],
     ])(query[key])
     query[key] = value
@@ -157,7 +157,7 @@ function validateQuery(query) {
   }
 
   for (let key of remainingKeys) {
-    errors[key] = "Unexpected entry"
+    errors[key] = "Ce champ est inattendu."
   }
   return [query, Object.keys(errors).length === 0 ? null : errors]
 }

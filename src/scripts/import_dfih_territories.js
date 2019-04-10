@@ -1,5 +1,6 @@
-import { createPool } from "../oracle"
 import { db } from "../database"
+import { slugify } from "../strings"
+import { createPool } from "../oracle"
 
 let pool = null
 
@@ -41,9 +42,10 @@ async function main() {
         `,
       )).rows
       for (let row of rows) {
+        row = [...row, slugify(row[1])]
         await db.none(
           `
-            INSERT INTO country_names VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO country_names VALUES ($1, $2, $6, $3, $4, $5)
           `,
           row,
         )
@@ -107,9 +109,10 @@ async function main() {
         `,
       )).rows
       for (let row of rows) {
+        row = [...row, slugify(row[1])]
         await db.none(
           `
-            INSERT INTO district_names VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO district_names VALUES ($1, $2, $6, $3, $4, $5)
           `,
           row,
         )
@@ -174,9 +177,10 @@ async function main() {
         `,
       )).rows
       for (let row of rows) {
+        row = [...row, slugify(row[1])]
         await db.none(
           `
-            INSERT INTO city_names VALUES ($1, $2, $3, $4, $5)
+            INSERT INTO city_names VALUES ($1, $2, $6, $3, $4, $5)
           `,
           row,
         )

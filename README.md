@@ -46,6 +46,7 @@ Two alternatives:
 ```bash
 npx babel-node src/scripts/import_dfih_territories.js
 npx babel-node src/scripts/import_dfih_corporations.js
+npx babel-node src/scripts/import_fake_corporations.js data/banques_fictives.csv
 ```
 
 #### Restore database from PostgreSQL dump

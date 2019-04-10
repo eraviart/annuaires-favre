@@ -21,7 +21,7 @@ export async function post(req, res) {
         {
           error: {
             code: 401,
-            message: "Unauthorized: User is not authenticated.",
+            message: "L'utilisateur n'est pas authentifié.",
           },
         },
         null,

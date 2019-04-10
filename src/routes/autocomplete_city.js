@@ -1,4 +1,5 @@
 import { db } from "../database"
+import { slugify } from "../strings"
 import {
   numberFromString,
   validateChain,
@@ -36,7 +37,7 @@ export async function get(req, res) {
   const result = await db.any(
     `
       SELECT DISTINCT
-        name <-> $<term> AS distance,
+        slug <-> $<term> AS distance,
         city AS id,
         insee_code_short,
         name
@@ -63,7 +64,7 @@ export async function get(req, res) {
     {
       districtId: query.district,
       limit: 10,
-      term: query.q || "",
+      term: slugify(query.q || ""),
       yearEnd: `${query.year}-12-31`,
       yearStart: `${query.year}-01-01`,
     },

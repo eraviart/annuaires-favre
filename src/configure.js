@@ -74,6 +74,7 @@ async function configureDatabase() {
       CREATE TABLE IF NOT EXISTS corporation_names(
         corporation integer NOT NULL REFERENCES corporations(id),
         name varchar(4000) NOT NULL,
+        slug text NOT NULL,
         startdate date NOT NULL,
         enddate date NOT NULL,
         source varchar(2000),
@@ -84,9 +85,15 @@ async function configureDatabase() {
   )
   await db.none(
     `
+      CREATE INDEX IF NOT EXISTS corporation_names_slug_idx
+        ON corporation_names (slug)
+    `
+  )
+  await db.none(
+    `
       CREATE INDEX IF NOT EXISTS corporation_names_trigrams_idx
         ON corporation_names
-        USING GIST (name gist_trgm_ops)
+        USING GIST (slug gist_trgm_ops)
     `
   )
 
@@ -121,7 +128,8 @@ async function configureDatabase() {
     `
       CREATE TABLE IF NOT EXISTS country_names(
         country integer NOT NULL REFERENCES countries(id),
-        name varchar(250),
+        name varchar(250) NOT NULL,
+        slug text NOT NULL,
         startdate date NOT NULL,
         enddate date NOT NULL,
         source varchar(2000),
@@ -131,9 +139,15 @@ async function configureDatabase() {
   )
   await db.none(
     `
+      CREATE INDEX IF NOT EXISTS country_names_slug_idx
+        ON country_names (slug)
+    `
+  )
+  await db.none(
+    `
       CREATE INDEX IF NOT EXISTS country_names_trigrams_idx
         ON country_names
-        USING GIST (name gist_trgm_ops)
+        USING GIST (slug gist_trgm_ops)
     `
   )
 
@@ -168,7 +182,8 @@ async function configureDatabase() {
     `
       CREATE TABLE IF NOT EXISTS district_names(
         district integer NOT NULL REFERENCES districts(id),
-        name varchar(250),
+        name varchar(250) NOT NULL,
+        slug text NOT NULL,
         startdate date NOT NULL,
         enddate date NOT NULL,
         source varchar(2000),
@@ -178,9 +193,15 @@ async function configureDatabase() {
   )
   await db.none(
     `
+      CREATE INDEX IF NOT EXISTS district_names_slug_idx
+        ON district_names (slug)
+    `
+  )
+  await db.none(
+    `
       CREATE INDEX IF NOT EXISTS district_names_trigrams_idx
         ON district_names
-        USING GIST (name gist_trgm_ops)
+        USING GIST (slug gist_trgm_ops)
     `
   )
 
@@ -216,7 +237,8 @@ async function configureDatabase() {
     `
       CREATE TABLE IF NOT EXISTS city_names(
         city integer NOT NULL REFERENCES cities(id),
-        name varchar(250),
+        name varchar(250) NOT NULL,
+        slug text NOT NULL,
         startdate date NOT NULL,
         enddate date NOT NULL,
         source varchar(2000),
@@ -226,9 +248,15 @@ async function configureDatabase() {
   )
   await db.none(
     `
+      CREATE INDEX IF NOT EXISTS city_names_slug_idx
+        ON city_names (slug)
+    `
+  )
+  await db.none(
+    `
       CREATE INDEX IF NOT EXISTS city_names_trigrams_idx
         ON city_names
-        USING GIST (name gist_trgm_ops)
+        USING GIST (slug gist_trgm_ops)
     `
   )
 

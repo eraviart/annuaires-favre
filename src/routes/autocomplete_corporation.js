@@ -1,4 +1,5 @@
 import { db } from "../database"
+import { slugify } from "../strings"
 import {
   validateMaybeTrimmedString,
 } from "../validators/core"
@@ -31,7 +32,7 @@ export async function get(req, res) {
   const result = await db.any(
     `
       SELECT DISTINCT
-        name <-> $<term> AS distance,
+        slug <-> $<term> AS distance,
         corporation AS id,
         name
       FROM corporation_names
@@ -40,7 +41,7 @@ export async function get(req, res) {
     `,
     {
       limit: 10,
-      term: query.q || "",
+      term: slugify(query.q || ""),
     },
   )
 

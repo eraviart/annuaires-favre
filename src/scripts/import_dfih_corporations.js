@@ -1,5 +1,6 @@
-import { createPool } from "../oracle"
 import { db } from "../database"
+import { slugify } from "../strings"
+import { createPool } from "../oracle"
 
 let pool = null
 
@@ -41,10 +42,11 @@ async function main() {
         `,
       )).rows
       for (let row of rows) {
+        row = [...row, slugify(row[1])]
         await db.none(
           `
             INSERT INTO corporation_names
-              VALUES ($1, $2, $3, $4, $5, $6)
+              VALUES ($1, $2, $7, $3, $4, $5, $6)
               ON CONFLICT
               DO NOTHING
           `,
@@ -66,10 +68,11 @@ async function main() {
         `,
       )).rows
       for (let row of rows) {
+        row = [...row, slugify(row[1])]
         await db.none(
           `
             INSERT INTO corporation_names
-              VALUES ($1, $2, $3, $4, $5, null)
+              VALUES ($1, $2, $6, $3, $4, $5, null)
               ON CONFLICT
               DO NOTHING
           `,

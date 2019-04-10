@@ -1,12 +1,9 @@
 import { db } from "../database"
+import { slugify } from "../strings"
 import {
-  validateBoolean,
   validateChain,
   validateInteger,
-  validateMaybeTrimmedString,
-  validateMissing,
   validateNonEmptyTrimmedString,
-  validateOption,
   validateTest,
 } from "../validators/core"
 
@@ -21,7 +18,7 @@ export async function post(req, res) {
         {
           error: {
             code: 401,
-            message: "Unauthorized: User is not authenticated.",
+            message: "L'utilisateur n'est pas authentifié.",
           },
         },
         null,
@@ -30,7 +27,7 @@ export async function post(req, res) {
     )
   }
 
-  const [body, error] = validateBody(req.body)
+  const [body, error] = await validateBody(req.body)
   if (error !== null) {
     console.error(
       `Error in form:\n${JSON.stringify(body, null, 2)}\n\nError:\n${JSON.stringify(error, null, 2)}`
@@ -45,7 +42,7 @@ export async function post(req, res) {
           error: {
             code: 400,
             details: error,
-            message: "Invalid body for form",
+            message: "Le formulaire contient des erreurs.",
           },
         },
         null,
@@ -77,6 +74,7 @@ export async function post(req, res) {
       INSERT INTO corporation_names (
         corporation,
         name,
+        slug,
         startdate,
         enddate,
         source,
@@ -85,6 +83,7 @@ export async function post(req, res) {
       VALUES (
         $<id>,
         $<corporationName>,
+        $<slug>,
         '1000-01-01',
         '3999-12-30',
         null,
@@ -93,6 +92,7 @@ export async function post(req, res) {
     `,
     {
       corporationName: body.corporationName,
+      slug: slugify(body.corporationName),
       id,
     }
   )
@@ -129,12 +129,12 @@ export async function post(req, res) {
   res.end(JSON.stringify(result, null, 2))
 }
 
-function validateBody(body) {
+async function validateBody(body) {
   if (body === null || body === undefined) {
-    return [body, "Missing body"]
+    return [body, "Le formulaire est vide."]
   }
   if (typeof body !== "object") {
-    return [body, `Expected an object, got ${typeof body}`]
+    return [body, `Le formulaire devrait être un "object" et non pas un "${typeof body}".`]
   }
 
   body = {
@@ -156,7 +156,7 @@ function validateBody(body) {
     remainingKeys.delete(key)
     const [value, error] = validateChain([
       validateInteger,
-      validateTest(value => value >= 0, "Expected a positive or zero integer"),
+      validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
     ])(body[key])
     body[key] = value
     if (error !== null) {
@@ -165,7 +165,7 @@ function validateBody(body) {
   }
 
   for (let key of remainingKeys) {
-    errors[key] = "Unexpected entry"
+    errors[key] = "Ce champ est inattendu."
   }
   return [body, Object.keys(errors).length === 0 ? null : errors]
 }

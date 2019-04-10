@@ -1,4 +1,5 @@
 import { db } from "../database"
+import { slugify } from "../strings"
 import {
   numberFromString,
   validateChain,
@@ -36,7 +37,7 @@ export async function get(req, res) {
   const result = await db.any(
     `
       SELECT
-        name <-> $<term> AS distance,
+        slug <-> $<term> AS distance,
         district AS id,
         name,
         postal_code
@@ -62,7 +63,7 @@ export async function get(req, res) {
     `,
     {
       limit: 10,
-      term: query.q || "",
+      term: slugify(query.q || ""),
       yearEnd: `${query.year}-12-31`,
       yearStart: `${query.year}-01-01`,
     },
