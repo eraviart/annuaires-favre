@@ -45,7 +45,7 @@ export async function post(req, res) {
           error: {
             code: 400,
             details: error,
-            message: "Invalid body for form",
+            message: "Le formulaire contient des erreurs.",
           },
         },
         null,
@@ -130,10 +130,10 @@ export async function post(req, res) {
 
 function validateBody(body) {
   if (body === null || body === undefined) {
-    return [body, "Missing body"]
+    return [body, "Le formulaire est vide."]
   }
   if (typeof body !== "object") {
-    return [body, `Expected an object, got ${typeof body}`]
+    return [body, `Le formulaire devrait être un "object" et non pas un "${typeof body}".`]
   }
 
   body = {
@@ -146,7 +146,7 @@ function validateBody(body) {
     remainingKeys.delete(key)
     const [value, error] = validateChain([
       validateInteger,
-      validateTest(value => value >= 0, "Expected a positive or zero integer"),
+      validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
     ])(body[key])
     body[key] = value
     if (error !== null) {
@@ -180,7 +180,7 @@ function validateBody(body) {
       validateMissing,
       [
         validateInteger,
-        validateTest(value => value >= 0, "Expected a positive or zero integer"),
+        validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
       ],
     ])(body[key])
     body[key] = value

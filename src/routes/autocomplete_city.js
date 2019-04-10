@@ -97,7 +97,7 @@ function validateQuery(query) {
       validateString,
       numberFromString,
       validateInteger,
-      validateTest(value => value >= 0, "Expected a positive or zero integer"),
+      validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
     ])(query[key])
     query[key] = value
     if (error !== null) {

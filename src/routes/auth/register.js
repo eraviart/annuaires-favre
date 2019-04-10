@@ -41,10 +41,10 @@ export async function post(req, res) {
 
 function validateBody(body) {
   if (body === null || body === undefined) {
-    return [body, "Missing body"]
+    return [body, "Le formulaire est vide."]
   }
   if (typeof body !== "object") {
-    return [body, `Expected an object, got ${typeof body}`]
+    return [body, `Le formulaire devrait être un "object" et non pas un "${typeof body}".`]
   }
 
   body = {
