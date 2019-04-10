@@ -56,13 +56,11 @@ export async function post(req, res) {
     `
       INSERT INTO corporations (
         startdate,
-        enddate,
-        source
+        enddate
       )
       VALUES (
         '1000-01-01',
-        '3999-12-30',
-        null
+        '3999-12-30'
       )
       RETURNING id
     `,
@@ -76,9 +74,7 @@ export async function post(req, res) {
         name,
         slug,
         startdate,
-        enddate,
-        source,
-        comments
+        enddate
       )
       VALUES (
         $<id>,
@@ -86,14 +82,12 @@ export async function post(req, res) {
         $<slug>,
         '1000-01-01',
         '3999-12-30',
-        null,
-        null
       )
     `,
     {
       corporationName: body.corporationName,
-      slug: slugify(body.corporationName),
       id,
+      slug: slugify(body.corporationName),
     }
   )
 
@@ -145,8 +139,16 @@ async function validateBody(body) {
 
   for (let key of ["corporationName"]) {
     remainingKeys.delete(key)
-    const [value, error] = validateNonEmptyTrimmedString(body[key])
+    let [value, error] = validateNonEmptyTrimmedString(body[key])
     body[key] = value
+    if (error === null) {
+      const slug = slugify(value)
+      if (!slug) {
+        error = "Le texte ne contient aucun caractère signifiant."
+      } else if ((await db.one("SELECT EXISTS(SELECT * FROM corporation_names WHERE slug=$1)", [slug])) .exists) {
+        error = "Une entreprise ayant un nom similaire existe déjà."
+      }
+    }
     if (error !== null) {
       errors[key] = error
     }
