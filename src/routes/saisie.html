@@ -44,6 +44,12 @@
 {/if}
 
 <form class="m-3" on:submit="submitForm(event)">
+  {#if errorCode}
+    <p class="bg-red border leading-tight px-3 py-2 rounded shadow text-white w-full">
+      {errorCode} {errorMessage || ""}
+    </p>
+  {/if}
+
   <label for="year">Année</label>
   <input
     bind:value="year"
@@ -51,6 +57,11 @@
     id="year"
     type="number"
   >
+  {#if errors.year}
+    <p class="bg-red border leading-tight px-3 py-2 rounded shadow text-white w-full">
+      {errors.year}
+    </p>
+  {/if}
 
   <label for="page">Page</label>
   <input
@@ -59,6 +70,11 @@
     id="page"
     type="number"
   >
+  {#if errors.page}
+    <p class="bg-red border leading-tight px-3 py-2 rounded shadow text-white w-full">
+      {errors.page}
+    </p>
+  {/if}
 
   <Autocomplete
     class="appearance-none border focus:outline-none focus:shadow-outline leading-tight px-3 py-2 rounded shadow text-grey-darker w-full"
@@ -71,6 +87,11 @@
   >
     <div class="notification">Chargement des départements…</div>
   </Autocomplete>
+  {#if errors.districtName}
+    <p class="bg-red border leading-tight px-3 py-2 rounded shadow text-white w-full">
+      {errors.districtName}
+    </p>
+  {/if}
   {#if districtId === null}
     <p class="bg-orange-dark border leading-tight px-3 py-2 rounded shadow text-white w-full">
       Un département est nécessaire au choix d'une localité.
@@ -93,6 +114,11 @@
   >
     <div class="notification">Chargement des localités…</div>
   </Autocomplete>
+  {#if errors.cityName}
+    <p class="bg-red border leading-tight px-3 py-2 rounded shadow text-white w-full">
+      {errors.cityName}
+    </p>
+  {/if}
   {#if cityId === null}
     {#if districtId !== null
       && citySlug
@@ -119,6 +145,11 @@
   >
     <div class="notification">Chargement des entreprises…</div>
   </Autocomplete>
+  {#if errors.corporationName}
+    <p class="bg-red border leading-tight px-3 py-2 rounded shadow text-white w-full">
+      {errors.corporationName}
+    </p>
+  {/if}
   {#if corporationId === null}
     {#if corporationSlug
       && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)
@@ -186,6 +217,9 @@
         districts: [],
         districtId: null,
         districtName: null,
+        errorCode: null,
+        errorMessage: null,
+        errors: {},
         lineId: null,
         lines: null,
         page: 1,
@@ -199,7 +233,9 @@
     },
     methods: {
       async autocompleteCity(term) {
-        this.set({ cityId: null, cityName: term })
+        const { errors } = this.get()
+        delete errors.cityName
+        this.set({ cityId: null, cityName: term, errors })
         const { districtId, year } = this.get()
         const response = await fetch(
           `autocomplete_city?district=${districtId}&q=${encodeURIComponent(term)}&year=${year}`,
@@ -212,7 +248,9 @@
         this.set({ cities })
       },
       async autocompleteCorporation(term) {
-        this.set({ corporationId: null, corporationName: term })
+        const { errors } = this.get()
+        delete errors.corporationName
+        this.set({ corporationId: null, corporationName: term, errors })
         const response = await fetch(`autocomplete_corporation?q=${encodeURIComponent(term)}`, {
           credentials: "same-origin",
         })
@@ -221,7 +259,9 @@
         this.set({ corporations })
       },
       async autocompleteDistrict(term) {
-        this.set({ districtId: null, districtName: term })
+        const { errors } = this.get()
+        delete errors.districtName
+        this.set({ districtId: null, districtName: term, errors })
         const { year } = this.get()
         const response = await fetch(`autocomplete_district?q=${encodeURIComponent(term)}&year=${year}`, {
           credentials: "same-origin",
@@ -237,7 +277,10 @@
         this.set({ corporationId: Number(item.id), corporationName: item.name })
       },
       async createCity() {
-        const { cityName, districtId, page, year } = this.get()
+        const { cityName, errors, districtId, page, year } = this.get()
+        delete errors.cityName
+        delete errors.page
+        delete errors.year
         const response = await fetch("new_city", {
           body: JSON.stringify({
             cityName,
@@ -252,19 +295,31 @@
           method: "POST",
         })
         const result =
-          response.ok || response.status === 400
+          response.ok || response.status >= 400 && response.status <= 403
             ? await response.json()
             : { error: { code: response.status, message: response.statusText } }
-        if (result.error) {
-          console.log(result.error.code, result.error.message)
+        const { error } = result
+        if (error) {
+          this.set({
+            cityId: null,
+            errorCode: error.code,
+            errorMessage: error.message,
+            errors: { ...errors, ...error.details },
+          })
         } else {
-          this.set({ cityId: result.id })
+          this.set({
+            cityId: result.id,
+            errorCode: null,
+            errorMessage: null,
+            errors,
+          })
         }
       },
       async createCorporation() {
-        const { corporationName, page, year } = this.get()
-        // TODO: validate fields, before submitting them.
-
+        const { corporationName, errors, page, year } = this.get()
+        delete errors.corporationName
+        delete errors.page
+        delete errors.year
         const response = await fetch("new_corporation", {
           body: JSON.stringify({
             corporationName,
@@ -278,13 +333,24 @@
           method: "POST",
         })
         const result =
-          response.ok || response.status === 400
+          response.ok || response.status >= 400 && response.status <= 403
             ? await response.json()
             : { error: { code: response.status, message: response.statusText } }
-        if (result.error) {
-          console.log(result.error.code, result.error.message)
+        const { error } = result
+        if (error) {
+          this.set({
+            corporationId: null,
+            errorCode: error.code,
+            errorMessage: error.message,
+            errors: { ...errors, ...error.details },
+          })
         } else {
-          this.set({ corporationId: result.id })
+          this.set({
+            corporationId: result.id,
+            errorCode: null,
+            errorMessage: null,
+            errors,
+          })
         }
       },
       districtSelected(item) {
@@ -293,6 +359,9 @@
       resetLineForm() {
         this.set({
           comment: null,
+          errorCode: null,
+          errorMessage: null,
+          errors: {},
           lineId: null,
           temporary: false,
         })
@@ -300,7 +369,6 @@
       async submitForm(event) {
         event.preventDefault()
 
-        // TODO: Validate form before sending it.
         const {
           cityId,
           cityName,
@@ -316,6 +384,7 @@
           year,
         } = this.get()
         const { user } = this.store.get()
+
         const upsertedLine = {
           id: null,  // null means in "upsert in progress".
           cityId,
@@ -361,11 +430,16 @@
           method: "POST",
         })
         const result =
-          response.ok || response.status === 400
+          response.ok || response.status >= 400 && response.status <= 403
             ? await response.json()
             : { error: { code: response.status, message: response.statusText } }
-        if (result.error) {
-          console.log(result.error.code, result.error.message)
+        const { error } = result
+        if (error) {
+          this.set({
+            errorCode: error.code,
+            errorMessage: error.message,
+            errors: { ...error.details },
+          })
         } else {
           upsertedLine.id = result.id // Also modifies updatedLines.
           this.set({ lines: updatedLines })
