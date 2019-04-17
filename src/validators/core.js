@@ -4,17 +4,6 @@ import assert from "assert"
 // But added support for "localhost"
 const urlRegExp = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)|localhost(?::\d{2,5})?(?:[/?#]\S*)?$/i
 
-export function numberFromString(value) {
-  if (value === null || value === undefined) {
-    return [value, "Missing value"]
-  }
-  const number = Number(value)
-  if (isNaN(number)) {
-    return [value, "Not a number"]
-  }
-  return [number, null]
-}
-
 export function validateArray(itemValidator) {
   return function(array) {
     if (array === null || array === undefined) {
@@ -71,6 +60,10 @@ export function validateChoice(options) {
     }
     return [value, null]
   }
+}
+
+export function validateEmpty(value) {
+  return validateChain([validateEmptyToNull, validateMissing])(value)
 }
 
 export function validateEmptyToNull(value) {
@@ -151,6 +144,17 @@ export function validateNonEmptyTrimmedString(value) {
   ])(value)
 }
 
+export function validateStringToNumber(value) {
+  if (value === null || value === undefined) {
+    return [value, "Missing value"]
+  }
+  const number = Number(value)
+  if (isNaN(number)) {
+    return [value, "Not a number"]
+  }
+  return [number, null]
+}
+
 export function validateOption(branches) {
   assert(Array.isArray(branches))
   assert(branches.length > 0)
@@ -221,6 +225,34 @@ export function validateTest(test, errorMessage) {
             ? errorMessage
             : errorMessage(value),
     ]
+  }
+}
+
+export function validateTuple(tupleValidator) {
+  assert(Array.isArray(tupleValidator))
+
+  return function(array) {
+    if (array === null || array === undefined) {
+      return [array, "Missing value"]
+    }
+    if (!Array.isArray(array)) {
+      return [array, `Expected an array, got "${typeof array}"`]
+    }
+    if(array.length !== tupleValidator.length) {
+      return [array, `Expected an array of length ${tupleValidator.length}, got "${array.length}"`]
+
+    }
+
+    const errors = {}
+    array = array
+      .map((value, index) => {
+        const [validatedValue, error] = tupleValidator[index](value)
+        if (error !== null) {
+          errors[index] = error
+        }
+        return validatedValue
+      })
+    return [array, Object.keys(errors).length === 0 ? null : errors]
   }
 }
 

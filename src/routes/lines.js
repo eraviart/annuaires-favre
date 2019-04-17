@@ -1,6 +1,6 @@
 import { db } from "../database"
 import {
-  numberFromString,
+  validateStringToNumber,
   validateInteger,
   validateMissing,
   validateOption,
@@ -127,7 +127,7 @@ function validateQuery(query) {
       validateMissing,
       [
         validateString,
-        numberFromString,
+        validateStringToNumber,
         validateInteger,
         validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
       ],
@@ -145,7 +145,7 @@ function validateQuery(query) {
       validateMissing,
       [
         validateString,
-        numberFromString,
+        validateStringToNumber,
         validateInteger,
         validateTest(value => value >= 1700 && value < 2000, "Expected a year between 1700 and 1999"),
       ],

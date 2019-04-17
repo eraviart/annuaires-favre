@@ -1,7 +1,7 @@
 import { db } from "../database"
 import { slugify } from "../strings"
 import {
-  numberFromString,
+  validateStringToNumber,
   validateChain,
   validateInteger,
   validateMaybeTrimmedString,
@@ -95,7 +95,7 @@ function validateQuery(query) {
     remainingKeys.delete(key)
     const [value, error] = validateChain([
       validateString,
-      numberFromString,
+      validateStringToNumber,
       validateInteger,
       validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
     ])(query[key])
@@ -120,7 +120,7 @@ function validateQuery(query) {
     remainingKeys.delete(key)
     const [value, error] = validateChain([
       validateString,
-      numberFromString,
+      validateStringToNumber,
       validateInteger,
       validateTest(value => value >= 1700 && value < 2000, "Expected a year between 1700 and 1999"),
     ])(query[key])
