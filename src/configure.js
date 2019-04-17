@@ -313,6 +313,7 @@ async function configureDatabase() {
         district_name text NOT NULL,
         page integer NOT NULL,
         temporary boolean NOT NULL,
+        fair boolean NOT NULL,
         user_id integer NOT NULL REFERENCES users(id),
         year integer NOT NULL,
         created_at timestamp without time zone NOT NULL,

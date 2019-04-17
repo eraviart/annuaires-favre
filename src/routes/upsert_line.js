@@ -68,6 +68,7 @@ export async function post(req, res) {
           district_name,
           page,
           temporary,
+          fair,
           user_id,
           year,
           created_at,
@@ -83,6 +84,7 @@ export async function post(req, res) {
           $<districtName>,
           $<page>,
           $<temporary>,
+          $<fair>,
           $<userId>,
           $<year>,
           current_timestamp,
@@ -110,6 +112,7 @@ export async function post(req, res) {
           district_name = $<districtName>,
           page = $<page>,
           temporary = $<temporary>,
+          fair = $<fair>,
           user_id = $<userId>,
           year = $<year>,
           updated_at = current_timestamp
@@ -173,6 +176,15 @@ function validateBody(body) {
     }
   }
 
+  for (let key of ["fair", "temporary"]) {
+    remainingKeys.delete(key)
+    const [value, error] = validateBoolean(body[key])
+    body[key] = value
+    if (error !== null) {
+      errors[key] = error
+    }
+  }
+
   {
     const key = "lineId"
     remainingKeys.delete(key)
@@ -183,16 +195,6 @@ function validateBody(body) {
         validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
       ],
     ])(body[key])
-    body[key] = value
-    if (error !== null) {
-      errors[key] = error
-    }
-  }
-
-  {
-    const key = "temporary"
-    remainingKeys.delete(key)
-    const [value, error] = validateBoolean(body[key])
     body[key] = value
     if (error !== null) {
       errors[key] = error

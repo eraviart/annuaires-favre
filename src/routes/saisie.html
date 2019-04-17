@@ -16,6 +16,7 @@
         <th>Localité</th>
         <th>Entreprise</th>
         <th>Temporaire</th>
+        <th>Jours de foire</th>
         <th>Commentaire</th>
       </tr>
     </thead>
@@ -36,6 +37,7 @@
           <td>{line.cityName}</td>
           <td>{line.corporationName}</td>
           <td>{line.temporary ? "√" : ""}</td>
+          <td>{line.fair ? "√" : ""}</td>
           <td>{line.comment || ""}</td>
         </tr>
       {/each}
@@ -165,6 +167,10 @@
     <input bind:checked="temporary" type="checkbox">
     Bureau temporaire
   </label>
+  <label>
+    <input bind:checked="fair" type="checkbox">
+    Jours de foire
+  </label>
 
   <label for="comment">Comment</label>
   <textarea
@@ -217,6 +223,7 @@
         errorCode: null,
         errorMessage: null,
         errors: {},
+        fair: false,
         lineId: null,
         lines: null,
         page: 1,
@@ -359,6 +366,7 @@
           errorCode: null,
           errorMessage: null,
           errors: {},
+          fair: false,
           lineId: null,
           temporary: false,
         })
@@ -374,6 +382,7 @@
           corporationName,
           districtId,
           districtName,
+          fair,
           lineId,
           lines,
           page,
@@ -391,6 +400,7 @@
           corporationName,
           districtId,
           districtName,
+          fair,
           page,
           temporary,
           userId: user.id,
@@ -415,6 +425,7 @@
             corporationName,
             districtId,
             districtName,
+            fair,
             lineId,
             page,
             temporary,
@@ -458,6 +469,7 @@
             corporationName: line.corporationName,
             districtId: line.districtId,
             districtName: line.districtName,
+            fair: line.fair,
             lineId: line.id,
             page: line.page,
             temporary: line.temporary,
