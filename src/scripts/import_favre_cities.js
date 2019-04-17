@@ -19,14 +19,14 @@ const optionDefinitions = [
   {
     defaultOption: true,
     help: "path of file containing the Favre cities" ,
-    name: "fake_corporations",
+    name: "cities",
     type: String,
   },
 ]
 const options = commandLineArgs(optionDefinitions)
 
 async function main() {
-  const csv = fs.readFileSync(options.fake_corporations)
+  const csv = fs.readFileSync(options.cities)
   const records = await new Promise((resolve, reject) => {
     csvParse(
       csv,
@@ -142,55 +142,6 @@ async function main() {
         },
       )
     }
-
-    // favreDistrictName = favreDistrictName.trim()
-    // id = parseInt(id)
-    // const enddateFrenchSplitted = enddateFrench.split("/")
-    // const enddate = `${enddateFrenchSplitted[2]}-${enddateFrenchSplitted[1]}-${enddateFrenchSplitted[0]}`
-    // const slug = slugify(name)
-    // const startdateFrenchSplitted = startdateFrench.split("/")
-    // const startdate = `${startdateFrenchSplitted[2]}-${startdateFrenchSplitted[1]}-${startdateFrenchSplitted[0]}`
-    // await db.none(
-    //   `
-    //     INSERT INTO corporations
-    //     VALUES (
-    //       $<id>,
-    //       $<startdate>,
-    //       $<enddate>,
-    //       'Banque fictive pour faciliter la saisie'
-    //     )
-    //     ON CONFLICT
-    //     DO NOTHING
-    //   `,
-    //   {
-    //     id,
-    //     enddate,
-    //     startdate,
-    //   },
-    // )
-    // await db.none(
-    //   `
-    //     INSERT INTO corporation_names
-    //     VALUES (
-    //       $<id>,
-    //       $<name>,
-    //       $<slug>,
-    //       $<startdate>,
-    //       $<enddate>,
-    //       'Banque fictive pour faciliter la saisie',
-    //       null
-    //     )
-    //     ON CONFLICT
-    //     DO NOTHING
-    //   `,
-    //   {
-    //     id,
-    //     enddate,
-    //     name,
-    //     slug,
-    //     startdate,
-    //   },
-    // )
   }
 }
 
