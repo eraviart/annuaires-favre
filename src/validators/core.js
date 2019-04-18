@@ -105,7 +105,7 @@ export function validateInteger(value) {
 export function validateMaybeTrimmedString(value) {
   return validateOption([
       validateMissing,
-      [validateString, validateFunction(value => value.trim()), validateEmptyToNull],
+      [validateTrimmedString, validateEmptyToNull],
     ])(value)
 }
 
@@ -138,8 +138,7 @@ export function validateNonEmpty(value) {
 
 export function validateNonEmptyTrimmedString(value) {
   return validateChain([
-    validateString,
-    validateFunction(value => value.trim()),
+    validateTrimmedString,
     validateNonEmpty,
   ])(value)
 }
@@ -226,6 +225,13 @@ export function validateTest(test, errorMessage) {
             : errorMessage(value),
     ]
   }
+}
+
+export function validateTrimmedString(value) {
+  return validateChain([
+    validateString,
+    validateFunction(value => value.trim()),
+  ])(value)
 }
 
 export function validateTuple(tupleValidator) {
