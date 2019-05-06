@@ -51,6 +51,8 @@ Edit `src/oracle-config.js` to change Oracle database informations. Then
 npx babel-node src/scripts/import_dfih_territories.js
 npx babel-node src/scripts/import_dfih_corporations.js
 npx babel-node src/scripts/import_fake_corporations.js data/banques_fictives.csv
+npx babel-node src/scripts/import_favre_cities.js data/villes_favre.csv
+npx babel-node src/scripts/import_favre_banks_from_lines.js data/lignes_favre.csv
 ```
 
 #### Restore database from PostgreSQL dump
