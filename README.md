@@ -9,7 +9,7 @@ git clone https://gitlab.huma-num.fr/eurhisfirm/annuaires-favre.git
 cd annuaires-favre/
 ```
 
-Edit `src/server-config.js` to change database informations. Then
+Edit `src/server-config.js` to change PostgreSQL database informations. Then
 
 ```bash
 npm install
@@ -20,6 +20,8 @@ npm install
 When using _Debian GNU/Linux_:
 
 ```bash
+apt install postgresql postgresql-contrib
+
 su - postgres
 createuser -D -P -R -S favre
   Enter password for new role: favre
@@ -42,6 +44,8 @@ npm run configure
 Two alternatives:
 
 #### Initialize database from DFIH Oracle database
+
+Edit `src/oracle-config.js` to change Oracle database informations. Then
 
 ```bash
 npx babel-node src/scripts/import_dfih_territories.js
