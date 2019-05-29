@@ -25,15 +25,19 @@ export async function post(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 
   const [body, error] = validateBody(req.body)
   if (error !== null) {
     console.error(
-      `Error in form:\n${JSON.stringify(body, null, 2)}\n\nError:\n${JSON.stringify(error, null, 2)}`
+      `Error in form:\n${JSON.stringify(
+        body,
+        null,
+        2,
+      )}\n\nError:\n${JSON.stringify(error, null, 2)}`,
     )
     res.writeHead(400, {
       "Content-Type": "application/json; charset=utf-8",
@@ -49,8 +53,8 @@ export async function post(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 
@@ -136,7 +140,10 @@ function validateBody(body) {
     return [body, "Le formulaire est vide."]
   }
   if (typeof body !== "object") {
-    return [body, `Le formulaire devrait être un "object" et non pas un "${typeof body}".`]
+    return [
+      body,
+      `Le formulaire devrait être un "object" et non pas un "${typeof body}".`,
+    ]
   }
 
   body = {
@@ -192,7 +199,10 @@ function validateBody(body) {
       validateMissing,
       [
         validateInteger,
-        validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
+        validateTest(
+          value => value >= 0,
+          "Le nombre doit être positif ou nul.",
+        ),
       ],
     ])(body[key])
     body[key] = value

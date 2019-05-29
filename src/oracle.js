@@ -24,7 +24,10 @@ export async function createPool() {
     })
     return pool
   } catch (error) {
-    console.log("An error occured while calling oracledb.createPool:\n", error.stack || error)
+    console.log(
+      "An error occured while calling oracledb.createPool:\n",
+      error.stack || error,
+    )
     throw error
   }
 }

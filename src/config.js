@@ -8,14 +8,19 @@ const config = {
         <div class="bg-orange font-bold rounded-t px-4 py-2 text-white">
           <i class="fas fa-exclamation-triangle"></i> Attention !
         </div>
-        <div class="bg-orange-lightest border border-orange-light border-t-0 px-4 py-3 rounded-b text-orange-dark">
+        <div class="bg-orange-100 border border-orange-400 border-t-0 px-4 py-3 rounded-b text-orange-600">
           <p>
             Ce site est <b>en développement</b>. Les informations qui y figurent peuvent être fausses et surtout
             <b>incomplètes</b>. En cas de doute, référez-vous aux sources des différentes données.
           </p>
           <p class="leading-normal">
             N'hésitez pas à nous
-            <a href="https://gitlab.huma-num.fr/eurhisfirm/annuaires-favre/issues" target="_blank" title="Support technique">signaler un problème</a>.
+            <a
+              class="text-blue underline"
+              href="https://gitlab.huma-num.fr/eurhisfirm/annuaires-favre/issues"
+              target="_blank"
+              title="Support technique"
+            >signaler un problème</a>.
           </p>
         </div>
       </article>
@@ -45,7 +50,11 @@ const config = {
 const [validConfig, error] = validateConfig(config)
 if (error !== null) {
   console.error(
-    `Error in configuration:\n${JSON.stringify(validConfig, null, 2)}\nError:\n${JSON.stringify(error, null, 2)}`
+    `Error in configuration:\n${JSON.stringify(
+      validConfig,
+      null,
+      2,
+    )}\nError:\n${JSON.stringify(error, null, 2)}`,
   )
   process.exit(-1)
 }

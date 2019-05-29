@@ -7,9 +7,8 @@ import passport from "passport"
 import { Strategy as LocalStrategy } from "passport-local"
 import polka from "polka"
 import sirv from "sirv"
-import { Store } from "svelte/store.js"
 
-import * as sapper from "../__sapper__/server.js"
+import * as sapper from "@sapper/server"
 import { checkDatabase, db } from "./database"
 import "./global.css"
 import { entryToUser } from "./model/users"
@@ -27,8 +26,8 @@ passport.deserializeUser(async function(userId, done) {
         SELECT * FROM users
         WHERE id = $1
       `,
-      userId
-    )
+      userId,
+    ),
   )
   done(null, user)
 })
@@ -50,19 +49,23 @@ passport.use(
             SELECT * FROM users
             WHERE name = $1
           `,
-          username
-        )
+          username,
+        ),
       )
       if (user === null) {
-        return done(null, false, { username: `No user with name "${username}".` })
+        return done(null, false, {
+          username: `No user with name "${username}".`,
+        })
       }
       if (password != user.password) {
-        return done(null, false, { password: `Invalid password for user "${username}".` })
+        return done(null, false, {
+          password: `Invalid password for user "${username}".`,
+        })
       }
 
       return done(null, user)
-    }
-  )
+    },
+  ),
 )
 
 checkDatabase()
@@ -90,12 +93,10 @@ checkDatabase()
         passport.initialize(),
         passport.session(),
         sapper.middleware({
-          store: req => {
-            return new Store({
-              user: req.user,
-            })
-          },
-        })
+          session: (req /* , res */) => ({
+            user: req.user,
+          }),
+        }),
       )
       .listen(PORT, error => {
         if (error) {

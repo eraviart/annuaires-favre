@@ -19,7 +19,7 @@ import {
 const optionDefinitions = [
   {
     defaultOption: true,
-    help: "path of file containing the Favre lines" ,
+    help: "path of file containing the Favre lines",
     name: "lines",
     type: String,
   },
@@ -34,7 +34,7 @@ async function main() {
       // {
       //   delimiter: ";",
       // },
-      function (err, records) {
+      function(err, records) {
         if (err) {
           reject(err)
         } else {
@@ -58,26 +58,29 @@ async function main() {
       bankId,
       temporary,
       fair,
-    ] = assertValid(validateChain([
-      validateTuple([
-        validateFrenchDateToIsoDate,  // startdate
-        validateFrenchDateToIsoDate,  // enddate
-        validateNonEmptyTrimmedString,  // Département
-        validateStringToNumber,  // Département ID
-        validateNonEmptyTrimmedString,  // Localité
-        validateStringToNumber,  // Localité ID
-        validateNonEmptyTrimmedString,  // Banque
-        validateStringToNumber,  // Banque ID
-        validateStringToBoolean,  // Guichet temporaire
-        validateStringToBoolean,  // Jours de foire
-        validateNonEmptyTrimmedString,  // computed
-        validateStringToNumber,  // Localité ID 2
-      ]),
-      validateTest(
-        record => record[5] === record[11],
-        record => `City IDs are not equal: ${record[5]} ≠ ${record[11]} in ${record}`,
-      ),
-    ])(record)).slice(0, 10)
+    ] = assertValid(
+      validateChain([
+        validateTuple([
+          validateFrenchDateToIsoDate, // startdate
+          validateFrenchDateToIsoDate, // enddate
+          validateNonEmptyTrimmedString, // Département
+          validateStringToNumber, // Département ID
+          validateNonEmptyTrimmedString, // Localité
+          validateStringToNumber, // Localité ID
+          validateNonEmptyTrimmedString, // Banque
+          validateStringToNumber, // Banque ID
+          validateStringToBoolean, // Guichet temporaire
+          validateStringToBoolean, // Jours de foire
+          validateNonEmptyTrimmedString, // computed
+          validateStringToNumber, // Localité ID 2
+        ]),
+        validateTest(
+          record => record[5] === record[11],
+          record =>
+            `City IDs are not equal: ${record[5]} ≠ ${record[11]} in ${record}`,
+        ),
+      ])(record),
+    ).slice(0, 10)
     const entry = {
       bankId,
       bankName,
@@ -91,8 +94,9 @@ async function main() {
       temporary,
     }
 
-    if (!(await db.one(
-      `
+    if (
+      !(await db.one(
+        `
         SELECT EXISTS(
           SELECT *
           FROM corporation_names
@@ -101,10 +105,12 @@ async function main() {
             AND name = $<bankName>
         )
       `,
-      entry,
-    )).exists) {
-      if ((await db.one(
-        `
+        entry,
+      )).exists
+    ) {
+      if (
+        (await db.one(
+          `
           SELECT EXISTS(
             SELECT *
             FROM corporations
@@ -112,8 +118,9 @@ async function main() {
               id = $<bankId>
           )
         `,
-        entry,
-      )).exists) {
+          entry,
+        )).exists
+      ) {
         console.log(`Adding name ${bankName} to bank ${bankId}…`)
       } else {
         console.log(`Creating bank ${bankId} with name ${bankName}…`)
@@ -189,8 +196,7 @@ function validateStringToBoolean(input) {
   }
 }
 
-main()
-  .catch(error => {
-    console.log(error.stack || error)
-    process.exit(1)
-  })
+main().catch(error => {
+  console.log(error.stack || error)
+  process.exit(1)
+})

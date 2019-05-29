@@ -1,13 +1,11 @@
 module.exports = {
-  "presets": [
-    "@babel/preset-env",
-  ],
-  "plugins": [
+  presets: ["@babel/preset-env"],
+  plugins: [
     "@babel/plugin-proposal-class-properties",
     [
       "@babel/plugin-proposal-decorators",
       {
-        "legacy": true,
+        legacy: true,
       },
     ],
     "@babel/plugin-proposal-do-expressions",
@@ -24,7 +22,7 @@ module.exports = {
     [
       "@babel/plugin-proposal-pipeline-operator",
       {
-        "proposal": "minimal",
+        proposal: "minimal",
       },
     ],
     "@babel/plugin-proposal-throw-expressions",

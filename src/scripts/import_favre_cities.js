@@ -18,7 +18,7 @@ import {
 const optionDefinitions = [
   {
     defaultOption: true,
-    help: "path of file containing the Favre cities" ,
+    help: "path of file containing the Favre cities",
     name: "cities",
     type: String,
   },
@@ -33,7 +33,7 @@ async function main() {
       // {
       //   delimiter: ";",
       // },
-      function (err, records) {
+      function(err, records) {
         if (err) {
           reject(err)
         } else {
@@ -46,33 +46,32 @@ async function main() {
 
   for (let record of records) {
     assert.strictEqual(record.length, 11, `Unexpected record: ${record}`)
-    let [
-      favreDistrictName,
-      favreCityName,
-      districtId,
-      cityId,
-    ] = assertValid(validateChain([
-      validateTuple([
-        validateNonEmptyTrimmedString,  // DISTRICT_FAVRE
-        validateNonEmptyTrimmedString,  // CITY_FAVRE
-        validateStringToNumber,  // DISTRICT_ID_DFIH
-        validateStringToNumber,  // CITY_ID_DFIH
-        validateEmpty,
-        validateEmpty,
-        validateEmpty,
-        validateEmpty,
-        validateEmpty,
-        validateNonEmptyTrimmedString,  // computed
-        validateStringToNumber,  // CITY_ID_DFIH
-      ]),
-      validateTest(
-        record => record[3] === record[10],
-        record => `City IDs are not equal: ${record[3]} ≠ ${record[10]} in ${record}`,
-      ),
-    ])(record)).slice(0, 4)
+    let [favreDistrictName, favreCityName, districtId, cityId] = assertValid(
+      validateChain([
+        validateTuple([
+          validateNonEmptyTrimmedString, // DISTRICT_FAVRE
+          validateNonEmptyTrimmedString, // CITY_FAVRE
+          validateStringToNumber, // DISTRICT_ID_DFIH
+          validateStringToNumber, // CITY_ID_DFIH
+          validateEmpty,
+          validateEmpty,
+          validateEmpty,
+          validateEmpty,
+          validateEmpty,
+          validateNonEmptyTrimmedString, // computed
+          validateStringToNumber, // CITY_ID_DFIH
+        ]),
+        validateTest(
+          record => record[3] === record[10],
+          record =>
+            `City IDs are not equal: ${record[3]} ≠ ${record[10]} in ${record}`,
+        ),
+      ])(record),
+    ).slice(0, 4)
 
-    if (!(await db.one(
-      `
+    if (
+      !(await db.one(
+        `
         SELECT EXISTS(
           SELECT *
           FROM district_names
@@ -81,11 +80,12 @@ async function main() {
             AND name = $<name>
         )
       `,
-      {
-        id: districtId,
-        name: favreDistrictName,
-      },
-    )).exists) {
+        {
+          id: districtId,
+          name: favreDistrictName,
+        },
+      )).exists
+    ) {
       console.log(`Adding name ${favreDistrictName} to district ${districtId}…`)
       await db.none(
         `
@@ -107,8 +107,9 @@ async function main() {
       )
     }
 
-    if (!(await db.one(
-      `
+    if (
+      !(await db.one(
+        `
         SELECT EXISTS(
           SELECT *
           FROM city_names
@@ -117,11 +118,12 @@ async function main() {
             AND name = $<name>
         )
       `,
-      {
-        id: cityId,
-        name: favreCityName,
-      },
-    )).exists) {
+        {
+          id: cityId,
+          name: favreCityName,
+        },
+      )).exists
+    ) {
       console.log(`Adding name ${favreCityName} to city ${cityId}…`)
       await db.none(
         `
@@ -145,8 +147,7 @@ async function main() {
   }
 }
 
-main()
-  .catch(error => {
-    console.log(error.stack || error)
-    process.exit(1)
-  })
+main().catch(error => {
+  console.log(error.stack || error)
+  process.exit(1)
+})

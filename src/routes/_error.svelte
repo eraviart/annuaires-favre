@@ -1,22 +1,20 @@
+<script>
+  import config from "../config"
+
+  export let error
+  export let status
+
+  const dev = process.env.NODE_ENV === "development"
+</script>
+
 <svelte:head>
   <title>{status} | {config.title}</title>
 </svelte:head>
 
-<h1>{status}</h1>
+<h1 class="text-2xl">{status}</h1>
 
 <p>{error.message}</p>
 
 {#if dev && error.stack}
   <pre class="whitespace-pre-wrap">{error.stack}</pre>
 {/if}
-
-<script>
-  import config from "../config"
-
-  export default {
-    helpers: {
-      config,
-      dev: process.env.NODE_ENV === "development",
-    },
-  }
-</script>

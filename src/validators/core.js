@@ -44,7 +44,7 @@ export function validateChain(validators) {
   return function(value) {
     let error = null
     for (let validator of validators) {
-      [value, error] = validator(value)
+      ;[value, error] = validator(value)
       if (error !== null) {
         return [value, error]
       }
@@ -54,7 +54,7 @@ export function validateChain(validators) {
 }
 
 export function validateChoice(options) {
-  return function (value) {
+  return function(value) {
     if (!options.includes(value)) {
       return [value, "Unexpected option"]
     }
@@ -104,9 +104,9 @@ export function validateInteger(value) {
 
 export function validateMaybeTrimmedString(value) {
   return validateOption([
-      validateMissing,
-      [validateTrimmedString, validateEmptyToNull],
-    ])(value)
+    validateMissing,
+    [validateTrimmedString, validateEmptyToNull],
+  ])(value)
 }
 
 export function validateMissing(value) {
@@ -137,10 +137,7 @@ export function validateNonEmpty(value) {
 }
 
 export function validateNonEmptyTrimmedString(value) {
-  return validateChain([
-    validateTrimmedString,
-    validateNonEmpty,
-  ])(value)
+  return validateChain([validateTrimmedString, validateNonEmpty])(value)
 }
 
 export function validateStringToNumber(value) {
@@ -165,14 +162,14 @@ export function validateOption(branches) {
       value = initialValue
       const validators = Array.isArray(branch) ? branch : [branch]
       {
-        [value, error] = validators[0](value)
+        ;[value, error] = validators[0](value)
       }
       if (error !== null) {
         errors.push(error)
         continue
       }
       for (let validator of validators.slice(1)) {
-        [value, error] = validator(value)
+        ;[value, error] = validator(value)
         if (error !== null) {
           return [value, error]
         }
@@ -194,7 +191,7 @@ export function validateSetValue(constant) {
 }
 
 export function validateStrictEqual(expected) {
-  return function (value) {
+  return function(value) {
     if (value !== expected) {
       return [value, `Expected a value equal to "${expected}"`]
     }
@@ -219,10 +216,10 @@ export function validateTest(test, errorMessage) {
       test(value)
         ? null
         : !errorMessage
-          ? "Test failed"
-          : typeof errorMessage === "string"
-            ? errorMessage
-            : errorMessage(value),
+        ? "Test failed"
+        : typeof errorMessage === "string"
+        ? errorMessage
+        : errorMessage(value),
     ]
   }
 }
@@ -244,20 +241,23 @@ export function validateTuple(tupleValidator) {
     if (!Array.isArray(array)) {
       return [array, `Expected an array, got "${typeof array}"`]
     }
-    if(array.length !== tupleValidator.length) {
-      return [array, `Expected an array of length ${tupleValidator.length}, got "${array.length}"`]
-
+    if (array.length !== tupleValidator.length) {
+      return [
+        array,
+        `Expected an array of length ${tupleValidator.length}, got "${
+          array.length
+        }"`,
+      ]
     }
 
     const errors = {}
-    array = array
-      .map((value, index) => {
-        const [validatedValue, error] = tupleValidator[index](value)
-        if (error !== null) {
-          errors[index] = error
-        }
-        return validatedValue
-      })
+    array = array.map((value, index) => {
+      const [validatedValue, error] = tupleValidator[index](value)
+      if (error !== null) {
+        errors[index] = error
+      }
+      return validatedValue
+    })
     return [array, Object.keys(errors).length === 0 ? null : errors]
   }
 }

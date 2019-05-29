@@ -12,7 +12,7 @@ async function configureDatabase() {
       CREATE TABLE IF NOT EXISTS version(
         number integer NOT NULL
       )
-    `
+    `,
   )
   let version = await db.oneOrNone("SELECT * FROM version")
   if (version === null) {
@@ -23,10 +23,16 @@ async function configureDatabase() {
   }
   assert(
     version.number <= versionNumber,
-    `Database is too recent for current version of application: ${version.number} > ${versionNumber}.`
+    `Database is too recent for current version of application: ${
+      version.number
+    } > ${versionNumber}.`,
   )
   if (version.number < versionNumber) {
-    console.log(`Upgrading database from version ${version.number} to ${versionNumber}...`)
+    console.log(
+      `Upgrading database from version ${
+        version.number
+      } to ${versionNumber}...`,
+    )
   }
 
   // Table: sessions
@@ -39,7 +45,7 @@ async function configureDatabase() {
         expire timestamp(6) NOT NULL
       )
       WITH (OIDS=FALSE);
-    `
+    `,
   )
 
   // Table: users
@@ -51,9 +57,11 @@ async function configureDatabase() {
         name text NOT NULL,
         password text NOT NULL
       )
-    `
+    `,
   )
-  await db.none("CREATE UNIQUE INDEX IF NOT EXISTS users_name_idx ON users(name)")
+  await db.none(
+    "CREATE UNIQUE INDEX IF NOT EXISTS users_name_idx ON users(name)",
+  )
 
   // Table: corporations
   await db.none(
@@ -64,7 +72,7 @@ async function configureDatabase() {
         enddate date NOT NULL,
         source varchar(2000)
       )
-    `
+    `,
   )
   const { max: corporationsIdMax } = await db.one(
     `
@@ -76,7 +84,7 @@ async function configureDatabase() {
     await db.none(
       `
         ALTER SEQUENCE corporations_id_seq RESTART WITH 20000
-      `
+      `,
     )
   }
 
@@ -94,20 +102,20 @@ async function configureDatabase() {
         comments varchar(4000),
         PRIMARY KEY (corporation, name, startdate, enddate)
       )
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS corporation_names_slug_idx
         ON corporation_names (slug)
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS corporation_names_trigrams_idx
         ON corporation_names
         USING GIST (slug gist_trgm_ops)
-    `
+    `,
   )
 
   // Table: dummy_corporations
@@ -120,7 +128,7 @@ async function configureDatabase() {
         user_id integer NOT NULL REFERENCES users(id),
         year integer NOT NULL
       )
-    `
+    `,
   )
 
   // Table: countries
@@ -133,7 +141,7 @@ async function configureDatabase() {
         iso_code varchar(10),
         source varchar(2000)
       )
-    `
+    `,
   )
 
   // Table: country_names
@@ -148,20 +156,20 @@ async function configureDatabase() {
         source varchar(2000),
         PRIMARY KEY (country, name, startdate, enddate)
       )
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS country_names_slug_idx
         ON country_names (slug)
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS country_names_trigrams_idx
         ON country_names
         USING GIST (slug gist_trgm_ops)
-    `
+    `,
   )
 
   // Table: districts
@@ -174,7 +182,7 @@ async function configureDatabase() {
         postal_code varchar(2),
         source varchar(2000)
       )
-    `
+    `,
   )
 
   // Table: country_district
@@ -187,7 +195,7 @@ async function configureDatabase() {
         enddate date NOT NULL,
         source varchar(2000)
       )
-    `
+    `,
   )
 
   // Table: district_names
@@ -202,20 +210,20 @@ async function configureDatabase() {
         source varchar(2000),
         PRIMARY KEY (district, name, startdate, enddate)
       )
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS district_names_slug_idx
         ON district_names (slug)
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS district_names_trigrams_idx
         ON district_names
         USING GIST (slug gist_trgm_ops)
-    `
+    `,
   )
 
   // Table: cities
@@ -229,7 +237,7 @@ async function configureDatabase() {
         insee_code_short varchar(10),
         source varchar(2000)
       )
-    `
+    `,
   )
   const { max: citiesIdMax } = await db.one(
     `
@@ -241,7 +249,7 @@ async function configureDatabase() {
     await db.none(
       `
         ALTER SEQUENCE cities_id_seq RESTART WITH 70000
-      `
+      `,
     )
   }
 
@@ -255,7 +263,7 @@ async function configureDatabase() {
         enddate date NOT NULL,
         source varchar(2000)
       )
-    `
+    `,
   )
 
   // Table: city_names
@@ -270,20 +278,20 @@ async function configureDatabase() {
         source varchar(2000),
         PRIMARY KEY (city, name, startdate, enddate)
       )
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS city_names_slug_idx
         ON city_names (slug)
-    `
+    `,
   )
   await db.none(
     `
       CREATE INDEX IF NOT EXISTS city_names_trigrams_idx
         ON city_names
         USING GIST (slug gist_trgm_ops)
-    `
+    `,
   )
 
   // Table: dummy_cities
@@ -296,7 +304,7 @@ async function configureDatabase() {
         user_id integer NOT NULL REFERENCES users(id),
         year integer NOT NULL
       )
-    `
+    `,
   )
 
   // Table: lines
@@ -319,7 +327,7 @@ async function configureDatabase() {
         created_at timestamp without time zone NOT NULL,
         updated_at timestamp without time zone NOT NULL
       )
-    `
+    `,
   )
 
   const previousVersionNumber = version.number
@@ -327,11 +335,17 @@ async function configureDatabase() {
   version.number = versionNumber
   assert(
     version.number >= previousVersionNumber,
-    `Error in database upgrade script: Wrong version number: ${version.number} < ${previousVersionNumber}.`
+    `Error in database upgrade script: Wrong version number: ${
+      version.number
+    } < ${previousVersionNumber}.`,
   )
   if (version.number !== previousVersionNumber) {
     await db.none("UPDATE version SET number = $1", version.number)
-    console.log(`Upgraded database from version ${previousVersionNumber} to ${version.number}.`)
+    console.log(
+      `Upgraded database from version ${previousVersionNumber} to ${
+        version.number
+      }.`,
+    )
   }
 }
 

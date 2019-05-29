@@ -13,7 +13,11 @@ export async function get(req, res) {
   const [query, error] = validateQuery(req.query)
   if (error !== null) {
     console.error(
-      `Error in autocompletion query:\n${JSON.stringify(query, null, 2)}\n\nError:\n${JSON.stringify(error, null, 2)}`
+      `Error in autocompletion query:\n${JSON.stringify(
+        query,
+        null,
+        2,
+      )}\n\nError:\n${JSON.stringify(error, null, 2)}`,
     )
     res.writeHead(400, {
       "Content-Type": "application/json; charset=utf-8",
@@ -29,8 +33,8 @@ export async function get(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 
@@ -106,7 +110,10 @@ function validateQuery(query) {
       validateString,
       validateStringToNumber,
       validateInteger,
-      validateTest(value => value >= 1700 && value < 2000, "Expected a year between 1700 and 1999"),
+      validateTest(
+        value => value >= 1700 && value < 2000,
+        "Expected a year between 1700 and 1999",
+      ),
     ])(query[key])
     query[key] = value
     if (error !== null) {

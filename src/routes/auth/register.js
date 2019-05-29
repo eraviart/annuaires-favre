@@ -1,8 +1,6 @@
 import { db } from "../../database"
 import { toUserJson } from "../../model/users"
-import {
-  validateNonEmptyTrimmedString,
-} from "../../validators/core"
+import { validateNonEmptyTrimmedString } from "../../validators/core"
 
 export async function post(req, res) {
   let [body, errors] = validateBody(req.body)
@@ -14,7 +12,12 @@ export async function post(req, res) {
   const { password, username } = body
 
   errors = {}
-  if ((await db.one("SELECT EXISTS (SELECT 1 FROM users WHERE name = $1)", username)).exists) {
+  if (
+    (await db.one(
+      "SELECT EXISTS (SELECT 1 FROM users WHERE name = $1)",
+      username,
+    )).exists
+  ) {
     errors["username"] = "An user with the same name already exists."
   }
   if (Object.keys(errors).length > 0) {
@@ -31,7 +34,7 @@ export async function post(req, res) {
     `INSERT INTO users(name, password)
       VALUES ($<name>, $<password>)
       RETURNING id, is_admin`,
-    user
+    user,
   )
   user.id = result.id
   user.isAdmin = result.is_admin
@@ -44,7 +47,10 @@ function validateBody(body) {
     return [body, "Le formulaire est vide."]
   }
   if (typeof body !== "object") {
-    return [body, `Le formulaire devrait être un "object" et non pas un "${typeof body}".`]
+    return [
+      body,
+      `Le formulaire devrait être un "object" et non pas un "${typeof body}".`,
+    ]
   }
 
   body = {

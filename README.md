@@ -57,7 +57,21 @@ npx babel-node src/scripts/import_favre_banks_from_lines.js data/lignes_favre.cs
 
 #### Restore database from PostgreSQL dump
 
-TODO
+To dump database, execute as `root`:
+```bash
+su - postgres
+pg_dump favre >/tmp/favre.sql
+exit
+```
+
+To restore it, execute as `root`:
+```bash
+su - postgres
+dropdb favre
+createdb -E utf-8 -O favre favre
+psql favre </tmp/favre.sql
+exit
+```
 
 ## Server Launch
 

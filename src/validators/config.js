@@ -52,10 +52,9 @@ export function validateConfig(config) {
   {
     const key = "globalAlert"
     remainingKeys.delete(key)
-    const [value, error] = validateOption([
-      validateMissing,
-      validateAlert,
-    ])(config[key])
+    const [value, error] = validateOption([validateMissing, validateAlert])(
+      config[key],
+    )
     config[key] = value
     if (error !== null) {
       errors[key] = error

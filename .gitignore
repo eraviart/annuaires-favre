@@ -2,5 +2,5 @@
 /static/@fortawesome/
 /static/server.css
 .DS_Store
-node_modules
+node_modules/
 yarn-error.log

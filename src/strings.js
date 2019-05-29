@@ -1,6 +1,11 @@
 import originalSlugify from "slug"
 
-const slugifyCharmap = { ...originalSlugify.defaults.charmap, "'": " ", "@": " ", ".": " " }
+const slugifyCharmap = {
+  ...originalSlugify.defaults.charmap,
+  "'": " ",
+  "@": " ",
+  ".": " ",
+}
 
 export function slugify(string, replacement) {
   const options = {

@@ -1,6 +1,4 @@
-import {
-  validateNonEmptyTrimmedString,
-} from "./core"
+import { validateNonEmptyTrimmedString } from "./core"
 
 export function validateOracleConfig(database) {
   if (database === null || database === undefined) {

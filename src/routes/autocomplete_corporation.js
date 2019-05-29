@@ -1,14 +1,16 @@
 import { db } from "../database"
 import { slugify } from "../strings"
-import {
-  validateMaybeTrimmedString,
-} from "../validators/core"
+import { validateMaybeTrimmedString } from "../validators/core"
 
 export async function get(req, res) {
   const [query, error] = validateQuery(req.query)
   if (error !== null) {
     console.error(
-      `Error in autocompletion query:\n${JSON.stringify(query, null, 2)}\n\nError:\n${JSON.stringify(error, null, 2)}`
+      `Error in autocompletion query:\n${JSON.stringify(
+        query,
+        null,
+        2,
+      )}\n\nError:\n${JSON.stringify(error, null, 2)}`,
     )
     res.writeHead(400, {
       "Content-Type": "application/json; charset=utf-8",
@@ -24,8 +26,8 @@ export async function get(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 

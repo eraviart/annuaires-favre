@@ -9,7 +9,7 @@ import { slugify } from "../strings"
 const optionDefinitions = [
   {
     defaultOption: true,
-    help: "path of file containing the fake corporations" ,
+    help: "path of file containing the fake corporations",
     name: "fake_corporations",
     type: String,
   },
@@ -24,7 +24,7 @@ async function main() {
       // {
       //   delimiter: ";",
       // },
-      function (err, records) {
+      function(err, records) {
         if (err) {
           reject(err)
         } else {
@@ -41,10 +41,14 @@ async function main() {
     id = parseInt(id)
     name = name.trim()
     const enddateFrenchSplitted = enddateFrench.split("/")
-    const enddate = `${enddateFrenchSplitted[2]}-${enddateFrenchSplitted[1]}-${enddateFrenchSplitted[0]}`
+    const enddate = `${enddateFrenchSplitted[2]}-${enddateFrenchSplitted[1]}-${
+      enddateFrenchSplitted[0]
+    }`
     const slug = slugify(name)
     const startdateFrenchSplitted = startdateFrench.split("/")
-    const startdate = `${startdateFrenchSplitted[2]}-${startdateFrenchSplitted[1]}-${startdateFrenchSplitted[0]}`
+    const startdate = `${startdateFrenchSplitted[2]}-${
+      startdateFrenchSplitted[1]
+    }-${startdateFrenchSplitted[0]}`
     await db.none(
       `
         INSERT INTO corporations
@@ -89,8 +93,7 @@ async function main() {
   }
 }
 
-main()
-  .catch(error => {
-    console.log(error.stack || error)
-    process.exit(1)
-  })
+main().catch(error => {
+  console.log(error.stack || error)
+  process.exit(1)
+})

@@ -12,7 +12,11 @@ export async function get(req, res) {
   const [query, error] = validateQuery(req.query)
   if (error !== null) {
     console.error(
-      `Error in lines query:\n${JSON.stringify(query, null, 2)}\n\nError:\n${JSON.stringify(error, null, 2)}`
+      `Error in lines query:\n${JSON.stringify(
+        query,
+        null,
+        2,
+      )}\n\nError:\n${JSON.stringify(error, null, 2)}`,
     )
     res.writeHead(400, {
       "Content-Type": "application/json; charset=utf-8",
@@ -28,8 +32,8 @@ export async function get(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 
@@ -55,7 +59,8 @@ export async function get(req, res) {
     whereClauses.push("year = $<year>")
   }
 
-  const whereClause = whereClauses.length === 0 ? "" : "WHERE " + whereClauses.join(" AND ")
+  const whereClause =
+    whereClauses.length === 0 ? "" : "WHERE " + whereClauses.join(" AND ")
 
   const result = (await db.any(
     `
@@ -83,25 +88,24 @@ export async function get(req, res) {
       ...query,
       whereClause,
     },
-  ))
-    .map(row => {
-      return {
-        id: row.id,
-        cityId: row.city_id,
-        cityName: row.city_name,
-        comment: row.comment,
-        corporationId: row.corporation_id,
-        corporationName: row.corporation_name,
-        districtId: row.district_id,
-        districtName: row.district_name,
-        fair: row.fair,
-        page: row.page,
-        temporary: row.temporary,
-        userId: row.user_id,
-        userName: row.user_name,
-        year: row.year,
-      }
-    })
+  )).map(row => {
+    return {
+      id: row.id,
+      cityId: row.city_id,
+      cityName: row.city_name,
+      comment: row.comment,
+      corporationId: row.corporation_id,
+      corporationName: row.corporation_name,
+      districtId: row.district_id,
+      districtName: row.district_name,
+      fair: row.fair,
+      page: row.page,
+      temporary: row.temporary,
+      userId: row.user_id,
+      userName: row.user_name,
+      year: row.year,
+    }
+  })
 
   res.writeHead(200, {
     "Content-Type": "application/json; charset=utf-8",
@@ -131,7 +135,10 @@ function validateQuery(query) {
         validateString,
         validateStringToNumber,
         validateInteger,
-        validateTest(value => value >= 0, "Le nombre doit être positif ou nul."),
+        validateTest(
+          value => value >= 0,
+          "Le nombre doit être positif ou nul.",
+        ),
       ],
     ])(query[key])
     query[key] = value
@@ -149,7 +156,10 @@ function validateQuery(query) {
         validateString,
         validateStringToNumber,
         validateInteger,
-        validateTest(value => value >= 1700 && value < 2000, "Expected a year between 1700 and 1999"),
+        validateTest(
+          value => value >= 1700 && value < 2000,
+          "Expected a year between 1700 and 1999",
+        ),
       ],
     ])(query[key])
     query[key] = value

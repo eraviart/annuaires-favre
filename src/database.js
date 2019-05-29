@@ -19,10 +19,16 @@ export async function checkDatabase() {
   // Check that database exists.
   dbSharedConnectionObject = await db.connect()
 
-  assert(await existsTable("version"), 'Database is not initialized. Run "npm run configure" to configure it.')
+  assert(
+    await existsTable("version"),
+    'Database is not initialized. Run "npm run configure" to configure it.',
+  )
 
   let version = await db.one("SELECT * FROM version")
-  assert(version.number <= versionNumber, 'Database format is too recent. Upgrade "Annuaires Favre" software.')
+  assert(
+    version.number <= versionNumber,
+    'Database format is too recent. Upgrade "Annuaires Favre" software.',
+  )
   assert.strictEqual(
     version.number,
     versionNumber,
@@ -31,6 +37,8 @@ export async function checkDatabase() {
 }
 
 async function existsTable(tableName) {
-  return (await db.one("SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name=$1)", [tableName]))
-    .exists
+  return (await db.one(
+    "SELECT EXISTS(SELECT * FROM information_schema.tables WHERE table_name=$1)",
+    [tableName],
+  )).exists
 }

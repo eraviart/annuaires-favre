@@ -22,15 +22,19 @@ export async function post(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 
   const [body, error] = await validateBody(req.body)
   if (error !== null) {
     console.error(
-      `Error in form:\n${JSON.stringify(body, null, 2)}\n\nError:\n${JSON.stringify(error, null, 2)}`
+      `Error in form:\n${JSON.stringify(
+        body,
+        null,
+        2,
+      )}\n\nError:\n${JSON.stringify(error, null, 2)}`,
     )
     res.writeHead(400, {
       "Content-Type": "application/json; charset=utf-8",
@@ -46,8 +50,8 @@ export async function post(req, res) {
           },
         },
         null,
-        2
-      )
+        2,
+      ),
     )
   }
 
@@ -85,7 +89,7 @@ export async function post(req, res) {
     {
       districtId: body.districtId,
       id,
-    }
+    },
   )
 
   await db.none(
@@ -109,7 +113,7 @@ export async function post(req, res) {
       cityName: body.cityName,
       id,
       slug: slugify(body.cityName),
-    }
+    },
   )
 
   await db.none(
@@ -135,7 +139,7 @@ export async function post(req, res) {
       page: body.page,
       userId: user.id,
       year: body.year,
-    }
+    },
   )
 
   res.writeHead(200, {
@@ -149,7 +153,10 @@ async function validateBody(body) {
     return [body, "Le formulaire est vide."]
   }
   if (typeof body !== "object") {
-    return [body, `Le formulaire devrait être un "object" et non pas un "${typeof body}".`]
+    return [
+      body,
+      `Le formulaire devrait être un "object" et non pas un "${typeof body}".`,
+    ]
   }
 
   body = {
@@ -166,7 +173,11 @@ async function validateBody(body) {
       const slug = slugify(value)
       if (!slug) {
         error = "Le texte ne contient aucun caractère signifiant."
-      } else if ((await db.one("SELECT EXISTS(SELECT * FROM city_names WHERE slug=$1)", [slug])) .exists) {
+      } else if (
+        (await db.one("SELECT EXISTS(SELECT * FROM city_names WHERE slug=$1)", [
+          slug,
+        ])).exists
+      ) {
         error = "Une localité ayant un nom similaire existe déjà."
       }
     }
