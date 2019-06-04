@@ -6,10 +6,12 @@
 
   let errors = null
   let password = ""
+  let user = null
   let username = ""
   const { session } = stores()
 
-  async function submit(event) {
+  async function submit() {
+    // eslint-disable-next-line no-undef
     const response = await fetch("auth/register", {
       body: JSON.stringify({ password, username }),
       credentials: "same-origin",

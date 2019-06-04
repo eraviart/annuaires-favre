@@ -1,5 +1,3 @@
-import assert from "assert"
-
 // Cf https://stackoverflow.com/questions/1303872/trying-to-validate-url-using-javascript
 // But added support for "localhost"
 const urlRegExp = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|127)(?:\.\d{1,3}){3})(?!(?:169\.254|192\.168)(?:\.\d{1,3}){2})(?!172\.(?:1[6-9]|2\d|3[0-1])(?:\.\d{1,3}){2})(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,})).?)|localhost(?::\d{2,5})?(?:[/?#]\S*)?$/i
@@ -152,8 +150,8 @@ export function validateStringToNumber(value) {
 }
 
 export function validateOption(branches) {
-  assert(Array.isArray(branches))
-  assert(branches.length > 0)
+  console.assert(Array.isArray(branches))
+  console.assert(branches.length > 0)
   return function(value) {
     const errors = []
     let error = null
@@ -232,7 +230,7 @@ export function validateTrimmedString(value) {
 }
 
 export function validateTuple(tupleValidator) {
-  assert(Array.isArray(tupleValidator))
+  console.assert(Array.isArray(tupleValidator))
 
   return function(array) {
     if (array === null || array === undefined) {

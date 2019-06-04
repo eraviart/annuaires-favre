@@ -1,0 +1,3 @@
+.button-link {
+  @apply underline text-blue-500 border-blue-500;
+}

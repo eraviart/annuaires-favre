@@ -1,6 +1,5 @@
 <script>
   import { stores } from "@sapper/app"
-  import assert from "assert"
   import fetch from "cross-fetch"
   import { onMount } from "svelte"
 
@@ -47,8 +46,7 @@
         credentials: "same-origin",
       },
     )
-    assert(response.ok)
-    cities = await response.json()
+    cities = response.ok ? await response.json() : []
   }
 
   async function autocompleteCorporation({ detail: term }) {
@@ -62,8 +60,7 @@
         credentials: "same-origin",
       },
     )
-    assert(response.ok)
-    corporations = await response.json()
+    corporations = response.ok ? await response.json() : []
   }
 
   async function autocompleteDistrict({ detail: term }) {
@@ -77,8 +74,7 @@
         credentials: "same-origin",
       },
     )
-    assert(response.ok)
-    districts = await response.json()
+    districts = response.ok ? await response.json() : []
   }
 
   function citySelected({ detail: item }) {
@@ -207,7 +203,7 @@
       updatedLines.push(upsertedLine)
     } else {
       const lineIndex = lines.findIndex(line => line.id === lineId)
-      assert(lineIndex >= 0)
+      console.assert(lineIndex >= 0)
       updatedLines[lineIndex] = upsertedLine
     }
     lines = updatedLines

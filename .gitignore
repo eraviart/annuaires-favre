@@ -1,6 +1,5 @@
 /__sapper__/
-/static/@fortawesome/
-/static/server.css
+/static/global.css
 .DS_Store
 node_modules/
 yarn-error.log

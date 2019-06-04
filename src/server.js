@@ -1,7 +1,6 @@
 import bodyParser from "body-parser"
 import compression from "compression"
 import PgSession from "connect-pg-simple"
-import { pbkdf2Sync } from "crypto"
 import session from "express-session"
 import passport from "passport"
 import { Strategy as LocalStrategy } from "passport-local"
@@ -10,10 +9,11 @@ import sirv from "sirv"
 
 import * as sapper from "@sapper/server"
 import { checkDatabase, db } from "./database"
-import "./global.css"
 import { entryToUser } from "./model/users"
 import serverConfig from "./server-config"
-import { slugify } from "./strings"
+
+import "@fortawesome/fontawesome-free/css/svg-with-js.css" // used for `fa-spin` class
+import "./styles/index.css"
 
 const { PORT, NODE_ENV } = process.env
 const dev = NODE_ENV === "development"

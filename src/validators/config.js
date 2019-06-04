@@ -1,13 +1,11 @@
 import {
   validateArray,
   validateBoolean,
-  validateChoice,
   validateMaybeTrimmedString,
   validateMissing,
   validateNonEmptyTrimmedString,
   validateOption,
   validateSetValue,
-  validateUrl,
 } from "./core"
 
 function validateAlert(alert) {

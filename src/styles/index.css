@@ -1,0 +1,10 @@
+/* Note: Never mix regular CSS and imports in the same file.
+cf https://tailwindcss.com/docs/using-with-preprocessors */
+
+@import "tailwindcss/base";
+
+@import "tailwindcss/components";
+@import "./components.css";
+
+@import "tailwindcss/utilities";
+@import "./utilities.css";
