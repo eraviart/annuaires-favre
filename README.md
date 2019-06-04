@@ -2,6 +2,8 @@
 
 _Web application to enter data from Favre yearbooks_
 
+The main repository for this project is hosted on [Huma-Num](https://www.huma-num.fr/): https://gitlab.huma-num.fr/eurhisfirm/annuaires-favre
+
 ## Install
 
 ```bash
