@@ -1,41 +1,76 @@
 <script>
-  import { stores } from "@sapper/app"
+  import { faBars } from "@fortawesome/free-solid-svg-icons/faBars"
+  import { faChevronDown } from "@fortawesome/free-solid-svg-icons/faChevronDown"
+  import { faSignInAlt } from "@fortawesome/free-solid-svg-icons/faSignInAlt"
+  import { faSignOutAlt } from "@fortawesome/free-solid-svg-icons/faSignOutAlt"
+  import { faUser } from "@fortawesome/free-solid-svg-icons/faUser"
+  import Icon from "fa-svelte"
   import { createEventDispatcher } from "svelte"
 
+  import { stores } from "@sapper/app"
   import config from "../config"
 
   const dispatch = createEventDispatcher()
+  const leftMenu = [
+    {
+      contentHtml: "Accueil",
+      prefetch: true,
+      title: "TODO",
+      url: ".",
+    },
+  ]
+  const rightMenu = [
+    {
+      contentHtml: "À propos",
+      prefetch: true,
+      title: "Informations sur ce site web",
+      url: "a-propos",
+    },
+  ]
   export let segment
   const { session } = stores()
-  let showMenu = false
+  let showMainMenu = false
+  let showUserMenu = false
+
+  function logout() {
+    showUserMenu = false
+    dispatch("logout")
+  }
 </script>
 
 <nav
   aria-label="main navigation"
-  class="fixed flex items-top justify-between flex-wrap bg-teal-800 px-2
-  w-full z-10"
+  class="fixed flex items-top justify-between flex-wrap bg-gray-800 px-2
+  text-gray-100 w-full z-10"
   role="navigation">
   <div class="flex flex-col flex-grow items-baseline my-1 md:flex-row">
-    <div class="flex items-baseline flex-shrink-0 text-white mr-6 my-2">
+    <div class="flex items-baseline flex-shrink-0 mr-6 my-2">
       <a
-        class="font-medium italic text-teal-100 text-xl tracking-tight"
+        class="font-medium italic text-xl tracking-tight"
         href={config.url}
+        on:click={() => (showMainMenu = false)}
         rel="prefetch"
         title={config.missionStatement}>
-        <img alt="" class="inline" height="16" src="/dfih-logo-150x74.png" width="32" />
+        <img
+          alt=""
+          class="inline"
+          height="16"
+          src="/dfih-logo-150x74.png"
+          width="32" />
          {config.title}
       </a>
     </div>
     <div
-      class="{showMenu ? 'block' : 'hidden'} flex-grow w-full md:flex
+      class="{showMainMenu ? 'block' : 'hidden'} flex-grow w-full md:flex
       md:items-center md:w-auto">
       <div class="flex flex-col md:flex-grow md:flex-row">
-        {#each config.leftMenu as menuItem}
+        {#each leftMenu as menuItem}
           <span class="inline-flex">
             <a
-              class="block border-b-2 flex-none mr-4 mt-4 pb-2 md:mt-0 hover:text-white {
-                (segment || '.') === menuItem.url ? 'text-teal-200' : 'border-teal-800 text-teal-100'
-              }"
+              class="block border-b-2 {(segment || '.') === menuItem.url ? 'border-gray-100' : 'border-gray-800'} flex-none mr-4 mt-4 md:mt-0 pb-2
+              hover:border-gray-400 hover:text-gray-400"
+              class:app-nav-link-current={(segment || '.') === menuItem.url}
+              on:click={() => (showMainMenu = false)}
               href={menuItem.url || ''}
               rel={menuItem.prefech ? 'prefetch' : null}
               title={menuItem.title || null}>
@@ -45,12 +80,14 @@
         {/each}
       </div>
       <div class="flex flex-col md:flex-row">
-        {#each config.rightMenu as menuItem}
+        {#each rightMenu as menuItem}
           <span class="inline-flex">
             <a
-              class="block border-b-2 flex-none ml-4 mt-4 pb-2
-              md:mt-0 hover:text-white {(segment || '.') === menuItem.url ? 'text-teal-200' : 'border-teal-800 text-teal-100'}"
+              class="block border-b-2 {(segment || '.') === menuItem.url ? 'border-gray-100' : 'border-gray-800'} flex-none mr-4 mt-4 md:mt-0 pb-2
+              hover:border-gray-400 hover:text-gray-400"
+              class:app-nav-link-current={(segment || '.') === menuItem.url}
               href={menuItem.url || ''}
+              on:click={() => (showMainMenu = false)}
               rel={menuItem.prefech ? 'prefetch' : null}
               title={menuItem.title || null}>
                {menuItem.contentHtml}
@@ -59,29 +96,46 @@
         {/each}
         <span class="inline-flex">
           <span
-            class="block border-b-2 flex-none ml-4 mt-4 pb-2 md:mt-0 hover:text-white border-teal-800 text-teal-100"
-            on:openNewIssueModal={() => dispatch('openNewIssueModal')}>
+            class="block border-b-2 border-gray-800 cursor-pointer flex-none mr-4 mt-4 md:mt-0 pb-2
+            hover:border-gray-400 hover:text-gray-400"
+            on:click={() => {
+              showMainMenu = false
+              dispatch('openNewIssueModal')
+            }}>
             Signaler un problème
           </span>
         </span>
         <span class="inline-flex">
           {#if $session.user}
-            <i class="ml-4 text-teal-100">
-              <i class="fas fa-user" />
-               {$session.user.name}
-            </i>
-            <a
-              class="block border-b-2 border-teal-800 ml-4 mt-4 pb-2 text-teal-100 md:inline-block md:mt-0 hover:text-white"
-              href="logout"
-              on:click|preventDefault={() => dispatch('logout')}>
-              Déconnexion
-            </a>
+            <div class="ml-4 relative">
+              <button on:click={() => (showUserMenu = !showUserMenu)}>
+                <Icon icon={faUser} />
+                 {$session.user.name}
+                <Icon icon={faChevronDown} />
+              </button>
+              {#if showUserMenu}
+                <ul
+                  class="absolute bg-gray-800 -mx-2 mt-10 p-2 right-0 rounded
+                  shadow-md text-center top-0 overflow-auto z-30"
+                  style="min-width: 9rem;">
+                  <li>
+                    <a href="logout" on:click|preventDefault={logout}>
+                      <Icon icon={faSignOutAlt} />
+                       Déconnexion
+                    </a>
+                  </li>
+                </ul>
+              {/if}
+            </div>
           {:else}
             <a
-              class="block border-b-2 border-teal-800 ml-4 mt-4  pb-2 text-teal-100 md:inline-block md:mt-0 hover:text-white"
+              class="block border-b-2 {(segment || '.') === 'login' ? 'border-gray-100' : 'border-gray-800'} flex-none mr-4 mt-4 md:mt-0 pb-2
+              hover:border-gray-400 hover:text-gray-400"
               href="login"
+              on:click={() => (showMainMenu = false)}
               rel="prefetch">
-              Connexion
+              <Icon icon={faSignInAlt} />
+               Connexion
             </a>
           {/if}
         </span>
@@ -90,10 +144,10 @@
   </div>
   <div class="block my-2 md:hidden">
     <button
-      class="border border-teal-400 flex items-center px-3 py-2 rounded
-      text-teal-100 hover:border-white hover:text-white"
-      on:click={() => (showMenu = !showMenu)}>
-      <i class="fas fa-bars" />
+      class="border border-gray-100 flex items-center px-3 py-2 rounded
+      hover:border-gray-400 hover:text-gray-400"
+      on:click={() => (showMainMenu = !showMainMenu)}>
+      <Icon icon={faBars} />
     </button>
   </div>
 </nav>

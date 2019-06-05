@@ -1,10 +1,13 @@
 <script>
+  import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle"
+  import { faTimes } from "@fortawesome/free-solid-svg-icons/faTimes"
+  import Icon from "fa-svelte"
   import { createEventDispatcher } from "svelte"
 
   export let description = ""
   const dispatch = createEventDispatcher()
   let error = null
-  export let title
+  export let title = ""
   let webUrl = null
 
   async function submit() {
@@ -38,18 +41,20 @@
 </script>
 
 <div class="fixed flex inset-0 z-50" role="dialog">
-  <div class="bg-teal-900 fixed opacity-75 inset-0 z-40" />
+  <div class="bg-gray-900 fixed opacity-75 inset-0 z-40" />
   <div
     class="bg-white flex flex-col m-auto max-h-full max-w-2xl sm:mt-16
     opacity-100 overflow-auto pb-4 pt-4 px-4 relative rounded shadow z-50">
     <div class="border-b mb-4 pb-3">
       <h1 class="font-medium text-lg">Effectuer une remarque</h1>
-      <button
-        class="absolute p-4 .right-0 .top-0"
-        on:click={() => dispatch('close')}
-        type="button">
-        <i class="fas fa-times" />
-      </button>
+      <div class="absolute p-4 top-0 right-0">
+        <button
+          class="border-2 border-gray-100 hover:border-gray-400 p-1 rounded text-gray-600 hover:text-gray-800"
+          on:click={() => dispatch('close')}
+          type="button">
+          <Icon icon={faTimes} />
+        </button>
+      </div>
     </div>
     {#if error === null && webUrl === null}
       <form on:submit|preventDefault={submit}>
@@ -63,8 +68,7 @@
             text-orange-600"
             role="alert">
             <p class="font-medium mb-2 text-lg">
-              <i class="fas fa-exclamation-triangle" />
-              Attention !
+              <Icon icon={faExclamationTriangle} />&nbsp;Attention !
             </p>
             <p class="leading-normal">
               Votre remarque sera anonyme, mais
@@ -101,7 +105,7 @@
         </div>
         <div class="flex justify-end mt-6">
           <button
-            class="bg-teal-500 hover:bg-teal-600 font-bold py-2 px-4 rounded
+            class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
             text-white"
             type="submit">
             Envoyer
@@ -145,7 +149,7 @@
       </div>
       <div class="flex justify-end mt-6">
         <button
-          class="bg-teal-500 hover:bg-teal-600 font-bold py-2 px-4 rounded
+          class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
           text-white"
           on:click={() => dispatch('close')}
           type="button">

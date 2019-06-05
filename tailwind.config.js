@@ -2,6 +2,9 @@ module.exports = {
   theme: {
     extend: {},
   },
-  variants: {},
+  variants: {
+    borderColor: ["responsive", "hover", "focus", "active"],
+    borderWidth: ["responsive", "hover", "focus", "active"],
+  },
   plugins: [],
 }

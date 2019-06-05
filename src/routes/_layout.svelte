@@ -31,7 +31,6 @@
   <slot />
   {#if showNewIssueModal}
     <NewIssueModal
-      on:close={() => (showNewIssueModal = false)}
-      path={$page.path} />
+      on:close={() => (showNewIssueModal = false)} />
   {/if}
 </main>
