@@ -30,7 +30,6 @@
   {/if}
   <slot />
   {#if showNewIssueModal}
-    <NewIssueModal
-      on:close={() => (showNewIssueModal = false)} />
+    <NewIssueModal on:close={() => (showNewIssueModal = false)} />
   {/if}
 </main>

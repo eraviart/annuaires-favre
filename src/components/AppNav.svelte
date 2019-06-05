@@ -67,8 +67,9 @@
         {#each leftMenu as menuItem}
           <span class="inline-flex">
             <a
-              class="block border-b-2 {(segment || '.') === menuItem.url ? 'border-gray-100' : 'border-gray-800'} flex-none mr-4 mt-4 md:mt-0 pb-2
-              hover:border-gray-400 hover:text-gray-400"
+              class="block border-b-2 {(segment || '.') === menuItem.url ? 'border-gray-100' : 'border-gray-800'}
+              flex-none mr-4 mt-4 md:mt-0 pb-2 hover:border-gray-400
+              hover:text-gray-400"
               class:app-nav-link-current={(segment || '.') === menuItem.url}
               on:click={() => (showMainMenu = false)}
               href={menuItem.url || ''}
@@ -83,8 +84,9 @@
         {#each rightMenu as menuItem}
           <span class="inline-flex">
             <a
-              class="block border-b-2 {(segment || '.') === menuItem.url ? 'border-gray-100' : 'border-gray-800'} flex-none mr-4 mt-4 md:mt-0 pb-2
-              hover:border-gray-400 hover:text-gray-400"
+              class="block border-b-2 {(segment || '.') === menuItem.url ? 'border-gray-100' : 'border-gray-800'}
+              flex-none mr-4 mt-4 md:mt-0 pb-2 hover:border-gray-400
+              hover:text-gray-400"
               class:app-nav-link-current={(segment || '.') === menuItem.url}
               href={menuItem.url || ''}
               on:click={() => (showMainMenu = false)}
@@ -96,8 +98,8 @@
         {/each}
         <span class="inline-flex">
           <span
-            class="block border-b-2 border-gray-800 cursor-pointer flex-none mr-4 mt-4 md:mt-0 pb-2
-            hover:border-gray-400 hover:text-gray-400"
+            class="block border-b-2 border-gray-800 cursor-pointer flex-none
+            mr-4 mt-4 md:mt-0 pb-2 hover:border-gray-400 hover:text-gray-400"
             on:click={() => {
               showMainMenu = false
               dispatch('openNewIssueModal')
@@ -129,8 +131,9 @@
             </div>
           {:else}
             <a
-              class="block border-b-2 {(segment || '.') === 'login' ? 'border-gray-100' : 'border-gray-800'} flex-none mr-4 mt-4 md:mt-0 pb-2
-              hover:border-gray-400 hover:text-gray-400"
+              class="block border-b-2 {(segment || '.') === 'login' ? 'border-gray-100' : 'border-gray-800'}
+              flex-none mr-4 mt-4 md:mt-0 pb-2 hover:border-gray-400
+              hover:text-gray-400"
               href="login"
               on:click={() => (showMainMenu = false)}
               rel="prefetch">

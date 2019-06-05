@@ -49,7 +49,8 @@
       <h1 class="font-medium text-lg">Effectuer une remarque</h1>
       <div class="absolute p-4 top-0 right-0">
         <button
-          class="border-2 border-gray-100 hover:border-gray-400 p-1 rounded text-gray-600 hover:text-gray-800"
+          class="border-2 border-gray-100 hover:border-gray-400 p-1 rounded
+          text-gray-600 hover:text-gray-800"
           on:click={() => dispatch('close')}
           type="button">
           <Icon icon={faTimes} />
@@ -68,7 +69,8 @@
             text-orange-600"
             role="alert">
             <p class="font-medium mb-2 text-lg">
-              <Icon icon={faExclamationTriangle} />&nbsp;Attention !
+              <Icon icon={faExclamationTriangle} />
+               Attention !
             </p>
             <p class="leading-normal">
               Votre remarque sera anonyme, mais
@@ -123,7 +125,7 @@
               Votre remarque a été transmise. Vous pouvez la suivre sur :
               <br />
               <a class="text-blue-500 underline" href={webUrl} target="_blank">
-                {webUrl}
+                 {webUrl}
               </a>
               <br />
             </p>
