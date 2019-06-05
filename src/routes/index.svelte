@@ -1,11 +1,90 @@
+<script context="module">
+  export async function preload() {
+    const response = await this.fetch("years", {
+      credentials: "same-origin",
+    })
+    const years = await response.json()
+    return { years }
+  }
+</script>
+
 <script>
+  import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle"
+  import Icon from "fa-svelte"
+
   import config from "../config"
+
+  export let years
+  let currentYear = null
+  let pages = []
+
+  async function toggleYear(year) {
+    if (currentYear === year) {
+      currentYear = null
+      return
+    }
+    // eslint-disable-next-line no-undef
+    const response = await fetch(`pages?year=${year}`, {
+      credentials: "same-origin",
+    })
+    pages = await response.json()
+    currentYear = year
+  }
 </script>
 
 <svelte:head>
   <title>{config.title}</title>
 </svelte:head>
 
-<h1 class="text-2xl">Great success!</h1>
-
-<p><strong>Try editing this file (routes/index.html) to test live reloading.</strong></p>
+<main class="container mx-auto">
+  <article class="max-w-md mx-auto my-10 text-center">
+    <img
+      class="w-1/2 mx-auto block"
+      src="dfih-logo-150x74.png"
+      alt="Logo de DFIH" />
+    <h1 class="text-3xl">Interface de saisie en ligne des pages des annuaires Favre</h1>
+  </article>
+  {#if years.length === 0}
+    <section
+      class="bg-orange-100 border-l-4 border-orange-500 mx-auto my-4 p-4
+      text-orange-500 md:w-2/3 lg:1/2">
+      <div class="flex mx-auto p-4">
+        <div class="mr-4">
+          <div
+            class="h-10 w-10 text-white bg-orange-500 rounded-full flex
+            justify-center items-center">
+            <Icon icon={faExclamationTriangle} />
+          </div>
+        </div>
+        <div>
+          <p class="mb-2 font-bold">Bienvenue !</p>
+          <p>Aucune année n'a encore été saisie.</p>
+        </div>
+      </div>
+      <div class="flex justify-end mt-4 py-2">
+        <a
+          class="bg-orange-500 hover:bg-orange-700 font-bold px-4 py-2 rounded
+          text-orange-100"
+          href="saisie">
+          Commencer la saisie
+        </a>
+      </div>
+    </section>
+  {:else}
+    <h2 class="text-2xl">Années</h2>
+    <ul class="list-disc list-inside">
+      {#each years as year}
+        <li>
+          <button on:click="{() => toggleYear(year)}">{year}</button>
+          {#if year === currentYear && pages.length > 0}
+            <ul>
+              {#each pages as page}
+                <li><a href="saisie?year={year}&page={page}">{page}</a></li>
+              {/each}
+            </ul>
+          {/if}
+        </li>
+      {/each}
+    </ul>
+  {/if}
+</main>

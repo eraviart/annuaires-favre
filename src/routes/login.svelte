@@ -10,6 +10,8 @@
   let username = ""
   const { session } = stores()
 
+  $: canSubmit = username && password
+
   async function submit() {
     // eslint-disable-next-line no-undef
     const response = await fetch("auth/login", {
@@ -38,45 +40,37 @@
   <title>Authentification | {config.title}</title>
 </svelte:head>
 
-<div class="auth-page">
-  <div class="container page">
-    <div class="row">
+<div class="mx-auto px-2 w-full md:w-1/2 lg:w-1/3">
+  <h1 class="text-2xl text-center">Identification</h1>
 
-      <div class="col-md-6 offset-md-3 col-xs-12">
-        <h1 class="text-2xl text-xs-center">Sign In</h1>
-        <p class="text-xs-center">
-          <a class="text-blue-500 underline" href="/register">
-            Need an account?
-          </a>
-        </p>
+  <ListErrors {errors} />
 
-        <ListErrors {errors} />
-
-        <form on:submit|preventDefault={submit}>
-          <fieldset class="form-group">
-            <input
-              class="form-control form-control-lg"
-              name="username"
-              type="text"
-              placeholder="Username"
-              bind:value={username} />
-          </fieldset>
-          <fieldset class="form-group">
-            <input
-              class="form-control form-control-lg"
-              name="password"
-              type="password"
-              placeholder="Password"
-              bind:value={password} />
-          </fieldset>
-          <button
-            class="btn btn-lg btn-primary pull-xs-right"
-            type="submit"
-            disabled={!username || !password}>
-            Sign in
-          </button>
-        </form>
-      </div>
+  <form class="mt-4" on:submit|preventDefault={submit}>
+    <input
+      class="appearance-none border leading-tight my-2 focus:outline-none px-3
+      py-2 rounded shadow focus:shadow-outline w-full"
+      name="username"
+      placeholder="Nom"
+      required
+      type="text"
+      bind:value={username} />
+    <input
+      class="appearance-none border leading-tight my-2 focus:outline-none px-3
+      py-2 rounded shadow focus:shadow-outline w-full"
+      name="password"
+      placeholder="Mot de passe"
+      required
+      type="password"
+      bind:value={password} />
+    <div class="flex items-baseline justify-between mt-6">
+      <a class="link" href="/register">Créer un nouveau compte</a>
+      <button
+        class="{canSubmit ? "bg-gray-600 hover:bg-gray-800" : "bg-gray-400"} font-bold px-4 py-2 rounded
+        text-white"
+        disabled={!username || !password}
+        type="submit">
+        M'identifier
+      </button>
     </div>
-  </div>
+  </form>
 </div>

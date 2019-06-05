@@ -124,7 +124,7 @@
             <p class="leading-normal">
               Votre remarque a été transmise. Vous pouvez la suivre sur :
               <br />
-              <a class="text-blue-500 underline" href={webUrl} target="_blank">
+              <a class="link" href={webUrl} target="_blank">
                  {webUrl}
               </a>
               <br />

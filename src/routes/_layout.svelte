@@ -5,7 +5,7 @@
   import AppNav from "../components/AppNav.svelte"
   import config from "../config"
 
-  const { page, session } = stores()
+  const { session } = stores()
   export let segment
   let showNewIssueModal = false
 
@@ -24,7 +24,7 @@
   on:logout={logout}
   on:openNewIssueModal={() => (showNewIssueModal = true)}
   {segment} />
-<main class="absolute inset-0 pt-12">
+<main class="pt-16">
   {#if config.globalAlert}
     {@html config.globalAlert.messageHtml}
   {/if}
