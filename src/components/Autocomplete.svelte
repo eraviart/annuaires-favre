@@ -17,6 +17,7 @@
   let inputField
   let isOpen = false
   export let items = []
+  let itemSelected = false
   export let minChar = 2
   export let name = null
   export let placeholder = ""
@@ -25,20 +26,19 @@
   $: {
     if (items.length > 0) {
       const nameTrimmed = name === null ? "" : name.trim()
-      filteredItems = items
-        .map(item => {
-          const itemNameHighlighted =
-            nameTrimmed === ""
-              ? item.name
-              : item.name.replace(
-                  RegExp(regExpEscape(nameTrimmed), "i"),
-                  "<b>$&</b>",
-                )
-          return {
-            ...item,
-            label: `${itemNameHighlighted} (${item.id})`,
-          }
-        })
+      filteredItems = items.map(item => {
+        const itemNameHighlighted =
+          nameTrimmed === ""
+            ? item.name
+            : item.name.replace(
+                RegExp(regExpEscape(nameTrimmed), "i"),
+                "<b>$&</b>",
+              )
+        return {
+          ...item,
+          label: `${itemNameHighlighted} (${item.id})`,
+        }
+      })
     } else {
       filteredItems = []
     }
@@ -52,15 +52,7 @@
   }
 
   $: {
-    isOpen = hasFocus && filteredItems.length > 0
-  }
-
-  function close(index) {
-    currentItemIndex = index
-    const result = filteredItems[index]
-    name = result.name
-    dispatch("select", result)
-    inputField.blur() // onBlur closes autocompletion menu.
+    isOpen = hasFocus && !itemSelected && filteredItems.length > 0
   }
 
   function onBlur(event) {
@@ -70,6 +62,7 @@
 
   function onFocus(event) {
     hasFocus = true
+    itemSelected = false
     if (event.target.value !== name) {
       dispatch("input", event.target.value)
     }
@@ -82,34 +75,58 @@
 
   function onKeyDown(event) {
     switch (event.keyCode) {
-      case 13:
-        // Enter
-        event.preventDefault() // Prevent form submission.
+      case 9:
+        // Tab
         if (currentItemIndex === -1) {
           currentItemIndex = 0 // Default select first item of list
         }
-        close(currentItemIndex)
-        // Simulate a Tab key down event, to move focus to next form field.
-        onKeyDown({ keyCode: 9 })
+        selectItem(currentItemIndex)
+        break
+      case 13:
+        // Enter
+        event.preventDefault() // Prevent form submission.
+        if (itemSelected) {
+          itemSelected = false
+        } else {
+          if (currentItemIndex === -1) {
+            currentItemIndex = 0 // Default select first item of list
+          }
+          selectItem(currentItemIndex)
+        }
         break
       case 27:
         // Escape
         event.preventDefault()
         inputField.blur()
+        itemSelected = false
         break
       case 38:
         // Arrow Up
-        if (currentItemIndex > 0) {
+        if (itemSelected) {
+          itemSelected = false
+        } else if (currentItemIndex > 0) {
           currentItemIndex -= 1
         }
         break
       case 40:
         // Arrow Down
-        if (currentItemIndex < filteredItems.length - 1) {
+        if (itemSelected) {
+          itemSelected = false
+        } else if (currentItemIndex < filteredItems.length - 1) {
           currentItemIndex += 1
         }
         break
+      default:
+        itemSelected = false
     }
+  }
+
+  function selectItem(index) {
+    currentItemIndex = index
+    itemSelected = true
+    const result = filteredItems[index]
+    name = result.name
+    dispatch("select", result)
   }
 
   function windowOnClick(/* event */) {
@@ -151,7 +168,7 @@
         <li
           class="{index === currentItemIndex ? 'bg-gray-900 text-gray-100 ' : ''}
           hover:bg-gray-700 hover:text-gray-100 p-1"
-          on:click={() => close(index)}>
+          on:click={() => selectItem(index)}>
           {@html result.label}
         </li>
       {/each}
