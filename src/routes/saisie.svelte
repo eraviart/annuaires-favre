@@ -269,8 +269,13 @@
   }
 
   function districtSelected({ detail: item }) {
-    districtId = Number(item.id)
-    districtName = item.name
+    const itemId = Number(item.id)
+    if (itemId !== districtId) {
+      districtId = itemId
+      districtName = item.name
+      cities = []
+      cityId = null
+    }
   }
 
   function resetLineForm() {
