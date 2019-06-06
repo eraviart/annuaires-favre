@@ -464,14 +464,14 @@
     {#if errors.districtName}
       <p
         class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-red-100 w-full">
          {errors.districtName}
       </p>
     {/if}
     {#if districtId === null}
       <p
         class="bg-orange-600 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-orange-100 w-full">
         Un département est nécessaire au choix d'une localité.
       </p>
     {:else}

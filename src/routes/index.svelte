@@ -51,7 +51,7 @@
       <div class="flex mx-auto p-4">
         <div class="mr-4">
           <div
-            class="h-10 w-10 text-white bg-orange-500 rounded-full flex
+            class="h-10 w-10 text-orange-100 bg-orange-500 rounded-full flex
             justify-center items-center">
             <Icon icon={faExclamationTriangle} />
           </div>
