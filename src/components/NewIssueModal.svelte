@@ -108,7 +108,7 @@
         <div class="flex justify-end mt-6">
           <button
             class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
-            text-white"
+            text-gray-100"
             type="submit">
             Envoyer
           </button>
@@ -152,7 +152,7 @@
       <div class="flex justify-end mt-6">
         <button
           class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
-          text-white"
+          text-gray-100"
           on:click={() => dispatch('close')}
           type="button">
           Fermer

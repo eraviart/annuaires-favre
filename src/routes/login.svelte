@@ -66,7 +66,7 @@
       <a class="link" href="/register">Créer un nouveau compte</a>
       <button
         class="{canSubmit ? "bg-gray-600 hover:bg-gray-800" : "bg-gray-400"} font-bold px-4 py-2 rounded
-        text-white"
+        text-gray-100"
         disabled={!username || !password}
         type="submit">
         M'identifier

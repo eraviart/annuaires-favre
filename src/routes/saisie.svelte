@@ -384,7 +384,7 @@
       <tbody>
         {#each lines as line}
           <tr
-            class={line.id === lineId ? 'bg-gray-900 text-white' : ''}
+            class={line.id === lineId ? 'bg-gray-900 text-gray-100' : ''}
             on:click={() => toggleSelectLine(line)}>
             <td>
               {#if line.id === null}

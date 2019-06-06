@@ -66,7 +66,7 @@
       <a class="link" href="/login">Utiliser un compte existant</a>
       <button
         class="{canSubmit ? "bg-gray-600 hover:bg-gray-800" : "bg-gray-400"} font-bold px-4 py-2 rounded
-        text-white"
+        text-gray-100"
         disabled={canSubmit}
         type="submit">
         Créer le compte
