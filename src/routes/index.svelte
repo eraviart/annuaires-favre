@@ -36,7 +36,7 @@
   <title>{config.title}</title>
 </svelte:head>
 
-<main class="container mx-auto">
+<div class="container mx-auto">
   <article class="max-w-md mx-auto my-10 text-center">
     <img
       class="w-1/2 mx-auto block"
@@ -105,4 +105,4 @@
       </a>
     </div>
   {/if}
-</main>
+</div>

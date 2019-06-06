@@ -390,217 +390,219 @@
 </svelte:head>
 
 <ValidUser>
-  <h1 class="text-2xl">Saisie</h1>
+  <div class="container mx-auto md:w-2/3 lg:w-1/2">
+    <h1 class="text-2xl">Saisie des lignes d'une page</h1>
 
-  <form class="m-3" on:submit|preventDefault={submitSearch}>
-    <label for="year">Année</label>
-    <input
-      bind:value={year}
-      class="appearance-none border focus:outline-none focus:shadow-outline
-      leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-      id="year"
-      max={now.getFullYear()}
-      min="1600"
-      type="number" />
-
-    <label for="page">Page</label>
-    <input
-      bind:value={page}
-      class="appearance-none border focus:outline-none focus:shadow-outline
-      leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-      id="page"
-      min="1"
-      type="number" />
-
-    <div class="flex justify-end mt-4 py-2">
-      <button
-        class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
-        text-gray-100"
-        type="submit">
-        Rechercher
-      </button>
-    </div>
-  </form>
-
-  {#if year === currentYear && page === currentPage}
-    {#if lines !== null}
-      <table>
-        <thead>
-          <tr>
-            <th />
-            <th>Utilisateur</th>
-            <th>Année</th>
-            <th>Page</th>
-            <th>Département</th>
-            <th>Localité</th>
-            <th>Entreprise</th>
-            <th>Temporaire</th>
-            <th>Jours de foire</th>
-            <th>Commentaire</th>
-          </tr>
-        </thead>
-        <tbody>
-          {#each lines as line}
-            <tr
-              class={line.id === lineId ? 'bg-gray-900 text-gray-100' : ''}
-              on:click={() => toggleSelectLine(line)}>
-              <td>
-                {#if line.id === null}
-                  …
-                {:else}
-                  <input
-                    checked={line.id === lineId}
-                    name="lineId"
-                    type="radio"
-                    value={line.id} />
-                {/if}
-              </td>
-              <td>{line.userName}</td>
-              <td>{line.year}</td>
-              <td>{line.page}</td>
-              <td>{line.districtName}</td>
-              <td>{line.cityName}</td>
-              <td>{line.corporationName}</td>
-              <td>{line.temporary ? '√' : ''}</td>
-              <td>{line.fair ? '√' : ''}</td>
-              <td>{line.comment || ''}</td>
-            </tr>
-          {/each}
-        </tbody>
-      </table>
-    {/if}
-
-    <form class="m-3" on:submit|preventDefault={submitEdit}>
-      {#if editErrorCode}
-        <p
-          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-          text-red-100 w-full">
-           {editErrorCode} {editErrorMessage || ''}
-        </p>
-      {/if}
-
-      <Autocomplete
-        className="appearance-none border focus:outline-none
-        focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-        text-gray-700 w-full"
-        items={districts}
-        name={districtName}
-        on:input={autocompleteDistrict}
-        on:select={districtSelected}
-        placeholder="Premières lettres d'un département…">
-        <div class="notification">Chargement des départements…</div>
-      </Autocomplete>
-      {#if editErrors.districtName}
-        <p
-          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-          text-red-100 w-full">
-           {editErrors.districtName}
-        </p>
-      {/if}
-      {#if districtId === null}
-        <p
-          class="bg-orange-600 border leading-tight px-3 py-2 rounded shadow
-          text-orange-100 w-full">
-          Un département est nécessaire au choix d'une localité.
-        </p>
-      {:else}
-        <span
-          class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-          w-full">
-           {districtId || ''}
-        </span>
-      {/if}
-
-      <Autocomplete
-        className="appearance-none border focus:outline-none
-        focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-        text-gray-700 w-full"
-        disabled={districtId === null}
-        items={cities}
-        name={cityName}
-        on:input={autocompleteCity}
-        on:select={citySelected}
-        placeholder="Premières lettres d'une localité…">
-        <div class="notification">Chargement des localités…</div>
-      </Autocomplete>
-      {#if editErrors.cityName}
-        <p
-          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-          text-red-100 w-full">
-           {editErrors.cityName}
-        </p>
-      {/if}
-      {#if cityId === null}
-        {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
-          <button on:click={createCity} type="button">
-            Créer « {cityName} »
-          </button>
-        {/if}
-      {:else}
-        <span
-          class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-          w-full">
-           {cityId || ''}
-        </span>
-      {/if}
-
-      <Autocomplete
-        className="appearance-none border focus:outline-none
-        focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-        text-gray-700 w-full"
-        items={corporations}
-        name={corporationName}
-        on:input={autocompleteCorporation}
-        on:select={corporationSelected}
-        placeholder="Premières lettres d'une entreprise…">
-        <div class="notification">Chargement des entreprises…</div>
-      </Autocomplete>
-      {#if editErrors.corporationName}
-        <p
-          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-          text-red-100 w-full">
-           {editErrors.corporationName}
-        </p>
-      {/if}
-      {#if corporationId === null}
-        {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
-          <button on:click={createCorporation} type="button">
-            Créer « {corporationName} »
-          </button>
-        {/if}
-      {:else}
-        <span
-          class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-          w-full">
-           {corporationId || ''}
-        </span>
-      {/if}
-
-      <label>
-        <input bind:checked={temporary} type="checkbox" />
-        Bureau temporaire
-      </label>
-      <label>
-        <input bind:checked={fair} type="checkbox" />
-        Jours de foire
-      </label>
-
-      <label for="comment">Comment</label>
-      <textarea
-        bind:value={comment}
+    <form class="m-3" on:submit|preventDefault={submitSearch}>
+      <label for="year">Année</label>
+      <input
+        bind:value={year}
         class="appearance-none border focus:outline-none focus:shadow-outline
         leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-        id="comment"
-        rows="4" />
+        id="year"
+        max={now.getFullYear()}
+        min="1600"
+        type="number" />
+
+      <label for="page">Page</label>
+      <input
+        bind:value={page}
+        class="appearance-none border focus:outline-none focus:shadow-outline
+        leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
+        id="page"
+        min="1"
+        type="number" />
 
       <div class="flex justify-end mt-4 py-2">
         <button
           class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
           text-gray-100"
           type="submit">
-          {#if lineId === null}Ajouter{:else}Modifier{/if}
+          Rechercher
         </button>
       </div>
     </form>
-  {/if}
+
+    {#if year === currentYear && page === currentPage}
+      {#if lines !== null && lines.length > 0}
+        <table>
+          <thead>
+            <tr>
+              <th />
+              <th>Utilisateur</th>
+              <th>Année</th>
+              <th>Page</th>
+              <th>Département</th>
+              <th>Localité</th>
+              <th>Entreprise</th>
+              <th>Temporaire</th>
+              <th>Jours de foire</th>
+              <th>Commentaire</th>
+            </tr>
+          </thead>
+          <tbody>
+            {#each lines as line}
+              <tr
+                class={line.id === lineId ? 'bg-gray-900 text-gray-100' : ''}
+                on:click={() => toggleSelectLine(line)}>
+                <td>
+                  {#if line.id === null}
+                    …
+                  {:else}
+                    <input
+                      checked={line.id === lineId}
+                      name="lineId"
+                      type="radio"
+                      value={line.id} />
+                  {/if}
+                </td>
+                <td>{line.userName}</td>
+                <td>{line.year}</td>
+                <td>{line.page}</td>
+                <td>{line.districtName}</td>
+                <td>{line.cityName}</td>
+                <td>{line.corporationName}</td>
+                <td>{line.temporary ? '√' : ''}</td>
+                <td>{line.fair ? '√' : ''}</td>
+                <td>{line.comment || ''}</td>
+              </tr>
+            {/each}
+          </tbody>
+        </table>
+      {/if}
+
+      <form class="m-3" on:submit|preventDefault={submitEdit}>
+        {#if editErrorCode}
+          <p
+            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+            text-red-100 w-full">
+             {editErrorCode} {editErrorMessage || ''}
+          </p>
+        {/if}
+
+        <Autocomplete
+          className="appearance-none border focus:outline-none
+          focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+          text-gray-700 w-full"
+          items={districts}
+          name={districtName}
+          on:input={autocompleteDistrict}
+          on:select={districtSelected}
+          placeholder="Premières lettres d'un département…">
+          <div class="notification">Chargement des départements…</div>
+        </Autocomplete>
+        {#if editErrors.districtName}
+          <p
+            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+            text-red-100 w-full">
+             {editErrors.districtName}
+          </p>
+        {/if}
+        {#if districtId === null}
+          <p
+            class="bg-orange-600 border leading-tight px-3 py-2 rounded shadow
+            text-orange-100 w-full">
+            Un département est nécessaire au choix d'une localité.
+          </p>
+        {:else}
+          <span
+            class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+            w-full">
+             {districtId || ''}
+          </span>
+        {/if}
+
+        <Autocomplete
+          className="appearance-none border focus:outline-none
+          focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+          text-gray-700 w-full"
+          disabled={districtId === null}
+          items={cities}
+          name={cityName}
+          on:input={autocompleteCity}
+          on:select={citySelected}
+          placeholder="Premières lettres d'une localité…">
+          <div class="notification">Chargement des localités…</div>
+        </Autocomplete>
+        {#if editErrors.cityName}
+          <p
+            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+            text-red-100 w-full">
+             {editErrors.cityName}
+          </p>
+        {/if}
+        {#if cityId === null}
+          {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
+            <button on:click={createCity} type="button">
+              Créer « {cityName} »
+            </button>
+          {/if}
+        {:else}
+          <span
+            class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+            w-full">
+             {cityId || ''}
+          </span>
+        {/if}
+
+        <Autocomplete
+          className="appearance-none border focus:outline-none
+          focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+          text-gray-700 w-full"
+          items={corporations}
+          name={corporationName}
+          on:input={autocompleteCorporation}
+          on:select={corporationSelected}
+          placeholder="Premières lettres d'une entreprise…">
+          <div class="notification">Chargement des entreprises…</div>
+        </Autocomplete>
+        {#if editErrors.corporationName}
+          <p
+            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+            text-red-100 w-full">
+             {editErrors.corporationName}
+          </p>
+        {/if}
+        {#if corporationId === null}
+          {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
+            <button on:click={createCorporation} type="button">
+              Créer « {corporationName} »
+            </button>
+          {/if}
+        {:else}
+          <span
+            class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+            w-full">
+             {corporationId || ''}
+          </span>
+        {/if}
+
+        <label>
+          <input bind:checked={temporary} type="checkbox" />
+          Bureau temporaire
+        </label>
+        <label>
+          <input bind:checked={fair} type="checkbox" />
+          Jours de foire
+        </label>
+
+        <label for="comment">Comment</label>
+        <textarea
+          bind:value={comment}
+          class="appearance-none border focus:outline-none focus:shadow-outline
+          leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
+          id="comment"
+          rows="4" />
+
+        <div class="flex justify-end mt-4 py-2">
+          <button
+            class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
+            text-gray-100"
+            type="submit">
+            {#if lineId === null}Ajouter{:else}Modifier{/if}
+          </button>
+        </div>
+      </form>
+    {/if}
+  </div>
 </ValidUser>
