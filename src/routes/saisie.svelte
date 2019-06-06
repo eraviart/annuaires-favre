@@ -102,7 +102,7 @@
 </script>
 
 <script>
-  import { stores } from "@sapper/app"
+  import { goto, stores } from "@sapper/app"
   import fetch from "cross-fetch"
 
   import Autocomplete from "../components/Autocomplete.svelte"
@@ -353,12 +353,7 @@
   }
 
   async function submitSearch() {
-    const response = await fetch(`lines?page=${page}&year=${year}`, {
-      credentials: "same-origin",
-    })
-    lines = response.ok ? await response.json() : null
-    currentPage = page
-    currentYear = year
+    goto(`saisie?year=${year}&page=${page}`)
   }
 
   function toggleSelectLine(line) {
