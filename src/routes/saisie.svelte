@@ -34,7 +34,7 @@
     })
     const lines = response.ok ? await response.json() : null
 
-    return { lines, page, year }
+    return { lines, currentPage: page, currentYear: year, page, year }
   }
 
   function validateQuery(query) {
@@ -121,15 +121,20 @@
   let districts = []
   let districtId = null
   let districtName = null
-  let errorCode = null
-  let errorMessage = null
-  let errors = {}
+  let editErrorCode = null
+  let editErrorMessage = null
+  let editErrors = {}
   let fair = false
   let lineId = null
   export let lines = null
+  const now = new Date()
   export let page = 1
   let temporary = false
+  const { user } = $session
   export let year = 1930
+
+  export let currentPage = page
+  export let currentYear = year
 
   $: citySlug = cityName === null ? null : slugify(cityName)
 
@@ -137,8 +142,8 @@
     corporationName === null ? null : slugify(corporationName)
 
   async function autocompleteCity({ detail: term }) {
-    errors = { ...errors }
-    delete errors.cityName
+    editErrors = { ...editErrors }
+    delete editErrors.cityName
     cityId = null
     cityName = term
     const response = await fetch(
@@ -153,8 +158,8 @@
   }
 
   async function autocompleteCorporation({ detail: term }) {
-    errors = { ...errors }
-    delete errors.corporationName
+    editErrors = { ...editErrors }
+    delete editErrors.corporationName
     corporationId = null
     corporationName = term
     const response = await fetch(
@@ -167,8 +172,8 @@
   }
 
   async function autocompleteDistrict({ detail: term }) {
-    errors = { ...errors }
-    delete errors.districtName
+    editErrors = { ...editErrors }
+    delete editErrors.districtName
     districtId = null
     districtName = term
     const response = await fetch(
@@ -191,9 +196,7 @@
   }
 
   async function createCity() {
-    delete errors.cityName
-    delete errors.page
-    delete errors.year
+    delete editErrors.cityName
     const response = await fetch("new_city", {
       body: JSON.stringify(
         {
@@ -218,21 +221,19 @@
     const { error } = result
     if (error) {
       cityId = null
-      errorCode = error.code
-      errorMessage = error.message
-      errors = { ...errors, ...error.details }
+      editErrorCode = error.code
+      editErrorMessage = error.message
+      editErrors = { ...editErrors, ...error.details }
     } else {
       cityId = result.id
-      errorCode = null
-      errorMessage = null
-      errors = { ...errors }
+      editErrorCode = null
+      editErrorMessage = null
+      editErrors = { ...editErrors }
     }
   }
 
   async function createCorporation() {
-    delete errors.corporationName
-    delete errors.page
-    delete errors.year
+    delete editErrors.corporationName
     const response = await fetch("new_corporation", {
       body: JSON.stringify(
         {
@@ -256,14 +257,14 @@
     const { error } = result
     if (error) {
       corporationId = null
-      errorCode = error.code
-      errorMessage = error.message
-      errors = { ...errors, ...error.details }
+      editErrorCode = error.code
+      editErrorMessage = error.message
+      editErrors = { ...editErrors, ...error.details }
     } else {
       corporationId = result.id
-      errorCode = null
-      errorMessage = null
-      errors = { ...errors }
+      editErrorCode = null
+      editErrorMessage = null
+      editErrors = { ...editErrors }
     }
   }
 
@@ -274,17 +275,17 @@
 
   function resetLineForm() {
     comment = null
-    errorCode = null
-    errorMessage = null
-    errors = {}
+    editErrorCode = null
+    editErrorMessage = null
+    editErrors = {}
     fair = false
     lineId = null
     temporary = false
   }
 
-  async function submitForm() {
-    const { user } = $session
-
+  async function submitEdit() {
+    console.assert(year === currentYear)
+    console.assert(page === currentPage)
     const upsertedLine = {
       id: null, // null means "upsert in progress".
       cityId,
@@ -341,14 +342,23 @@
         : { error: { code: response.status, message: response.statusText } }
     const { error } = result
     if (error) {
-      errorCode = error.code
-      errorMessage = error.message
-      errors = { ...error.details }
+      editErrorCode = error.code
+      editErrorMessage = error.message
+      editErrors = { ...error.details }
     } else {
       upsertedLine.id = result.id // Also modifies updatedLines.
       lines = updatedLines
       resetLineForm()
     }
+  }
+
+  async function submitSearch() {
+    const response = await fetch(`lines?page=${page}&year=${year}`, {
+      credentials: "same-origin",
+    })
+    lines = response.ok ? await response.json() : null
+    currentPage = page
+    currentYear = year
   }
 
   function toggleSelectLine(line) {
@@ -382,76 +392,16 @@
 <ValidUser>
   <h1 class="text-2xl">Saisie</h1>
 
-  {#if lines !== null}
-    <table>
-      <thead>
-        <tr>
-          <th />
-          <th>Utilisateur</th>
-          <th>Année</th>
-          <th>Page</th>
-          <th>Département</th>
-          <th>Localité</th>
-          <th>Entreprise</th>
-          <th>Temporaire</th>
-          <th>Jours de foire</th>
-          <th>Commentaire</th>
-        </tr>
-      </thead>
-      <tbody>
-        {#each lines as line}
-          <tr
-            class={line.id === lineId ? 'bg-gray-900 text-gray-100' : ''}
-            on:click={() => toggleSelectLine(line)}>
-            <td>
-              {#if line.id === null}
-                …
-              {:else}
-                <input
-                  checked={line.id === lineId}
-                  name="lineId"
-                  type="radio"
-                  value={line.id} />
-              {/if}
-            </td>
-            <td>{line.userName}</td>
-            <td>{line.year}</td>
-            <td>{line.page}</td>
-            <td>{line.districtName}</td>
-            <td>{line.cityName}</td>
-            <td>{line.corporationName}</td>
-            <td>{line.temporary ? '√' : ''}</td>
-            <td>{line.fair ? '√' : ''}</td>
-            <td>{line.comment || ''}</td>
-          </tr>
-        {/each}
-      </tbody>
-    </table>
-  {/if}
-
-  <form class="m-3" on:submit|preventDefault={submitForm}>
-    {#if errorCode}
-      <p
-        class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-red-100 w-full">
-         {errorCode} {errorMessage || ''}
-      </p>
-    {/if}
-
+  <form class="m-3" on:submit|preventDefault={submitSearch}>
     <label for="year">Année</label>
     <input
       bind:value={year}
       class="appearance-none border focus:outline-none focus:shadow-outline
       leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
       id="year"
+      max={now.getFullYear()}
+      min="1600"
       type="number" />
-    {#if errors.year}
-      <p
-        class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-red-100 w-full">
-         {errors.year}
-      </p>
-    {/if}
 
     <label for="page">Page</label>
     <input
@@ -459,128 +409,198 @@
       class="appearance-none border focus:outline-none focus:shadow-outline
       leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
       id="page"
+      min="1"
       type="number" />
-    {#if errors.page}
-      <p
-        class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-red-100 w-full">
-         {errors.page}
-      </p>
-    {/if}
 
-    <Autocomplete
-      className="appearance-none border focus:outline-none focus:shadow-outline
-      leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-      items={districts}
-      name={districtName}
-      on:input={autocompleteDistrict}
-      on:select={districtSelected}
-      placeholder="Premières lettres d'un département…">
-      <div class="notification">Chargement des départements…</div>
-    </Autocomplete>
-    {#if errors.districtName}
-      <p
-        class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-red-100 w-full">
-         {errors.districtName}
-      </p>
-    {/if}
-    {#if districtId === null}
-      <p
-        class="bg-orange-600 border leading-tight px-3 py-2 rounded shadow
-        text-orange-100 w-full">
-        Un département est nécessaire au choix d'une localité.
-      </p>
-    {:else}
-      <span
-        class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-        w-full">
-         {districtId || ''}
-      </span>
-    {/if}
-
-    <Autocomplete
-      className="appearance-none border focus:outline-none focus:shadow-outline
-      leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-      disabled={districtId === null}
-      items={cities}
-      name={cityName}
-      on:input={autocompleteCity}
-      on:select={citySelected}
-      placeholder="Premières lettres d'une localité…">
-      <div class="notification">Chargement des localités…</div>
-    </Autocomplete>
-    {#if errors.cityName}
-      <p
-        class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-red-100 w-full">
-         {errors.cityName}
-      </p>
-    {/if}
-    {#if cityId === null}
-      {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
-        <button on:click={createCity} type="button">
-          Créer « {cityName} »
-        </button>
-      {/if}
-    {:else}
-      <span
-        class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-        w-full">
-         {cityId || ''}
-      </span>
-    {/if}
-
-    <Autocomplete
-      className="appearance-none border focus:outline-none focus:shadow-outline
-      leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-      items={corporations}
-      name={corporationName}
-      on:input={autocompleteCorporation}
-      on:select={corporationSelected}
-      placeholder="Premières lettres d'une entreprise…">
-      <div class="notification">Chargement des entreprises…</div>
-    </Autocomplete>
-    {#if errors.corporationName}
-      <p
-        class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-red-100 w-full">
-         {errors.corporationName}
-      </p>
-    {/if}
-    {#if corporationId === null}
-      {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
-        <button on:click={createCorporation} type="button">
-          Créer « {corporationName} »
-        </button>
-      {/if}
-    {:else}
-      <span
-        class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-        w-full">
-         {corporationId || ''}
-      </span>
-    {/if}
-
-    <label>
-      <input bind:checked={temporary} type="checkbox" />
-      Bureau temporaire
-    </label>
-    <label>
-      <input bind:checked={fair} type="checkbox" />
-      Jours de foire
-    </label>
-
-    <label for="comment">Comment</label>
-    <textarea
-      bind:value={comment}
-      class="appearance-none border focus:outline-none focus:shadow-outline
-      leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-      id="comment"
-      rows="4" />
-
-    <button type="submit">
-      {#if lineId === null}Ajouter{:else}Modifier{/if}
-    </button>
+    <div class="flex justify-end mt-4 py-2">
+      <button
+        class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
+        text-gray-100"
+        type="submit">
+        Rechercher
+      </button>
+    </div>
   </form>
+
+  {#if year === currentYear && page === currentPage}
+    {#if lines !== null}
+      <table>
+        <thead>
+          <tr>
+            <th />
+            <th>Utilisateur</th>
+            <th>Année</th>
+            <th>Page</th>
+            <th>Département</th>
+            <th>Localité</th>
+            <th>Entreprise</th>
+            <th>Temporaire</th>
+            <th>Jours de foire</th>
+            <th>Commentaire</th>
+          </tr>
+        </thead>
+        <tbody>
+          {#each lines as line}
+            <tr
+              class={line.id === lineId ? 'bg-gray-900 text-gray-100' : ''}
+              on:click={() => toggleSelectLine(line)}>
+              <td>
+                {#if line.id === null}
+                  …
+                {:else}
+                  <input
+                    checked={line.id === lineId}
+                    name="lineId"
+                    type="radio"
+                    value={line.id} />
+                {/if}
+              </td>
+              <td>{line.userName}</td>
+              <td>{line.year}</td>
+              <td>{line.page}</td>
+              <td>{line.districtName}</td>
+              <td>{line.cityName}</td>
+              <td>{line.corporationName}</td>
+              <td>{line.temporary ? '√' : ''}</td>
+              <td>{line.fair ? '√' : ''}</td>
+              <td>{line.comment || ''}</td>
+            </tr>
+          {/each}
+        </tbody>
+      </table>
+    {/if}
+
+    <form class="m-3" on:submit|preventDefault={submitEdit}>
+      {#if editErrorCode}
+        <p
+          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+          text-red-100 w-full">
+           {editErrorCode} {editErrorMessage || ''}
+        </p>
+      {/if}
+
+      <Autocomplete
+        className="appearance-none border focus:outline-none
+        focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+        text-gray-700 w-full"
+        items={districts}
+        name={districtName}
+        on:input={autocompleteDistrict}
+        on:select={districtSelected}
+        placeholder="Premières lettres d'un département…">
+        <div class="notification">Chargement des départements…</div>
+      </Autocomplete>
+      {#if editErrors.districtName}
+        <p
+          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+          text-red-100 w-full">
+           {editErrors.districtName}
+        </p>
+      {/if}
+      {#if districtId === null}
+        <p
+          class="bg-orange-600 border leading-tight px-3 py-2 rounded shadow
+          text-orange-100 w-full">
+          Un département est nécessaire au choix d'une localité.
+        </p>
+      {:else}
+        <span
+          class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+          w-full">
+           {districtId || ''}
+        </span>
+      {/if}
+
+      <Autocomplete
+        className="appearance-none border focus:outline-none
+        focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+        text-gray-700 w-full"
+        disabled={districtId === null}
+        items={cities}
+        name={cityName}
+        on:input={autocompleteCity}
+        on:select={citySelected}
+        placeholder="Premières lettres d'une localité…">
+        <div class="notification">Chargement des localités…</div>
+      </Autocomplete>
+      {#if editErrors.cityName}
+        <p
+          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+          text-red-100 w-full">
+           {editErrors.cityName}
+        </p>
+      {/if}
+      {#if cityId === null}
+        {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
+          <button on:click={createCity} type="button">
+            Créer « {cityName} »
+          </button>
+        {/if}
+      {:else}
+        <span
+          class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+          w-full">
+           {cityId || ''}
+        </span>
+      {/if}
+
+      <Autocomplete
+        className="appearance-none border focus:outline-none
+        focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+        text-gray-700 w-full"
+        items={corporations}
+        name={corporationName}
+        on:input={autocompleteCorporation}
+        on:select={corporationSelected}
+        placeholder="Premières lettres d'une entreprise…">
+        <div class="notification">Chargement des entreprises…</div>
+      </Autocomplete>
+      {#if editErrors.corporationName}
+        <p
+          class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+          text-red-100 w-full">
+           {editErrors.corporationName}
+        </p>
+      {/if}
+      {#if corporationId === null}
+        {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
+          <button on:click={createCorporation} type="button">
+            Créer « {corporationName} »
+          </button>
+        {/if}
+      {:else}
+        <span
+          class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+          w-full">
+           {corporationId || ''}
+        </span>
+      {/if}
+
+      <label>
+        <input bind:checked={temporary} type="checkbox" />
+        Bureau temporaire
+      </label>
+      <label>
+        <input bind:checked={fair} type="checkbox" />
+        Jours de foire
+      </label>
+
+      <label for="comment">Comment</label>
+      <textarea
+        bind:value={comment}
+        class="appearance-none border focus:outline-none focus:shadow-outline
+        leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
+        id="comment"
+        rows="4" />
+
+      <div class="flex justify-end mt-4 py-2">
+        <button
+          class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
+          text-gray-100"
+          type="submit">
+          {#if lineId === null}Ajouter{:else}Modifier{/if}
+        </button>
+      </div>
+    </form>
+  {/if}
 </ValidUser>
