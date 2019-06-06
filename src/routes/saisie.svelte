@@ -416,7 +416,7 @@
     {#if errorCode}
       <p
         class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-red-100 w-full">
          {errorCode} {errorMessage || ''}
       </p>
     {/if}
@@ -431,7 +431,7 @@
     {#if errors.year}
       <p
         class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-red-100 w-full">
          {errors.year}
       </p>
     {/if}
@@ -446,7 +446,7 @@
     {#if errors.page}
       <p
         class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-red-100 w-full">
          {errors.page}
       </p>
     {/if}
@@ -496,7 +496,7 @@
     {#if errors.cityName}
       <p
         class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-red-100 w-full">
          {errors.cityName}
       </p>
     {/if}
@@ -527,7 +527,7 @@
     {#if errors.corporationName}
       <p
         class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-        text-white w-full">
+        text-red-100 w-full">
          {errors.corporationName}
       </p>
     {/if}
