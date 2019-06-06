@@ -23,7 +23,7 @@
   export let required = false
 
   $: {
-    if (items.length > 0) {
+    if (isLoading && items.length > 0) {
       const slug = slugify(name)
       filteredItems = items
         // .filter(item => {
@@ -90,9 +90,9 @@
         if (currentItemIndex === -1) {
           currentItemIndex = 0 // Default select first item of list
         }
-        this.close(currentItemIndex)
+        close(currentItemIndex)
         // Simulate a Tab key down event, to move focus to next form field.
-        this.onKeyDown({ keyCode: 9 })
+        onKeyDown({ keyCode: 9 })
         break
       case 27:
         // Escape
