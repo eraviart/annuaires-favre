@@ -13,8 +13,8 @@
   export let disabled = false
   let filteredItems = []
   export let fromStart = true // Default type ahead
+  let hasFocus = false
   let inputField
-  let isLoading = false
   let isOpen = false
   export let items = []
   export let minChar = 2
@@ -23,16 +23,10 @@
   export let required = false
 
   $: {
-    if (isLoading && items.length > 0) {
-      const slug = slugify(name)
+    if (items.length > 0) {
+      const nameTrimmed = name === null ? "" : name.trim()
       filteredItems = items
-        // .filter(item => {
-        //   return fromStart
-        //     ? slugify(item.name).startsWith(slugify(name))
-        //     : slugify(item.name).includes(slugify(name))
-        // })
         .map(item => {
-          const nameTrimmed = name === null ? "" : name.trim()
           const itemNameHighlighted =
             nameTrimmed === ""
               ? item.name
@@ -45,12 +39,20 @@
             label: `${itemNameHighlighted} (${item.id})`,
           }
         })
-      currentItemIndex = filteredItems.findIndex(
-        item => slugify(item.name) === slug,
-      )
-      isLoading = false
-      isOpen = filteredItems.length > 0
+    } else {
+      filteredItems = []
     }
+  }
+
+  $: {
+    const slug = slugify(name || "")
+    currentItemIndex = filteredItems.findIndex(
+      item => slugify(item.name) === slug,
+    )
+  }
+
+  $: {
+    isOpen = hasFocus && filteredItems.length > 0
   }
 
   function close(index) {
@@ -62,23 +64,19 @@
   }
 
   function onBlur(event) {
-    isLoading = false
-    isOpen = false
+    hasFocus = false
     dispatch("blur", event)
   }
 
   function onFocus(event) {
-    if (event.target.value === name) {
-      isOpen = filteredItems.length > 0
-    } else {
-      isLoading = true
+    hasFocus = true
+    if (event.target.value !== name) {
       dispatch("input", event.target.value)
     }
     dispatch("focus", event)
   }
 
   function onInput(event) {
-    isLoading = true
     dispatch("input", event.target.value)
   }
 
@@ -115,7 +113,7 @@
   }
 
   function windowOnClick(/* event */) {
-    if (isOpen) {
+    if (hasFocus) {
       // Close autocompleter when a click occurs outside.
       inputField.blur()
     }
@@ -158,10 +156,5 @@
         </li>
       {/each}
     </ul>
-  {/if}
-  {#if isLoading}
-    <slot>
-      <p class="fallback">Chargement des données en cours...</p>
-    </slot>
   {/if}
 </div>
