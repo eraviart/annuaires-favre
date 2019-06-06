@@ -3,7 +3,10 @@
     validateStringToNumber,
     validateChain,
     validateInteger,
-    validateString,
+    validateMaybeTrimmedString,
+    validateMissing,
+    validateOption,
+    validateSetValue,
     validateTest,
   } from "../validators/core"
 
@@ -15,7 +18,14 @@
 
     const [query, error] = validateQuery(pageInfos.query)
     if (error !== null) {
-      this.error(400, `Erreurs dans les paramètres de la requête : ${JSON.stringify(error, null, 2)}`)
+      this.error(
+        400,
+        `Erreurs dans les paramètres de la requête : ${JSON.stringify(
+          error,
+          null,
+          2,
+        )}`,
+      )
     }
     const { page, year } = query
 
@@ -45,13 +55,15 @@
       const key = "page"
       remainingKeys.delete(key)
       const [value, error] = validateChain([
-        validateString,
-        validateStringToNumber,
-        validateInteger,
-        validateTest(
-          value => value >= 1,
-          "Expected a number ≥ 1",
-        ),
+        validateMaybeTrimmedString,
+        validateOption([
+          [validateMissing, validateSetValue(1)],
+          [
+            validateStringToNumber,
+            validateInteger,
+            validateTest(value => value >= 1, "Expected a number ≥ 1"),
+          ],
+        ]),
       ])(query[key])
       query[key] = value
       if (error !== null) {
@@ -63,13 +75,18 @@
       const key = "year"
       remainingKeys.delete(key)
       const [value, error] = validateChain([
-        validateString,
-        validateStringToNumber,
-        validateInteger,
-        validateTest(
-          value => value >= 1700 && value < 2000,
-          "Expected a year between 1700 and 1999",
-        ),
+        validateMaybeTrimmedString,
+        validateOption([
+          [validateMissing, validateSetValue(1930)],
+          [
+            validateStringToNumber,
+            validateInteger,
+            validateTest(
+              value => value >= 1700 && value < 2000,
+              "Expected a year between 1700 and 1999",
+            ),
+          ],
+        ]),
       ])(query[key])
       query[key] = value
       if (error !== null) {

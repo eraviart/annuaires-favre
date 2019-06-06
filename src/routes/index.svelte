@@ -77,14 +77,32 @@
         <li>
           <button on:click="{() => toggleYear(year)}">{year}</button>
           {#if year === currentYear && pages.length > 0}
-            <ul>
-              {#each pages as page}
-                <li><a href="saisie?year={year}&page={page}">{page}</a></li>
-              {/each}
-            </ul>
+            <div class="ml-4">
+              <ul class="list-disc list-inside">
+                {#each pages as page}
+                  <li><a href="saisie?year={year}&page={page}">{page}</a></li>
+                {/each}
+              </ul>
+              <div class="flex justify-start mt-4 py-2">
+                <a
+                  class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
+                  text-gray-100"
+                  href="saisie?year={year}&page={Math.max(...pages, 0) + 1}">
+                  Nouvelle page
+                </a>
+              </div>
+            </div>
           {/if}
         </li>
       {/each}
     </ul>
+    <div class="flex justify-start mt-4 py-2">
+      <a
+        class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
+        text-gray-100"
+        href="saisie?year={Math.max(...years, 1929) + 1}">
+        Nouvelle année
+      </a>
+    </div>
   {/if}
 </main>
