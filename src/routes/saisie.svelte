@@ -1,19 +1,92 @@
-<!-- <script context="module">
-  export async function preload(/* page, */ session) {
-    // const { slug } = page.params
+<script context="module">
+  import {
+    validateStringToNumber,
+    validateChain,
+    validateInteger,
+    validateString,
+    validateTest,
+  } from "../validators/core"
+
+  export async function preload(pageInfos, session) {
     const { user } = session
+    if (!user) {
+      return null
+    }
 
-    const res = await this.fetch(`blog/${slug}.json`)
-    const article = await res.json()
+    const [query, error] = validateQuery(pageInfos.query)
+    if (error !== null) {
+      this.error(400, `Erreurs dans les paramètres de la requête : ${JSON.stringify(error, null, 2)}`)
+    }
+    const { page, year } = query
 
-    return { article }
+    const response = await this.fetch(`lines?page=${page}&year=${year}`, {
+      credentials: "same-origin",
+    })
+    const lines = response.ok ? await response.json() : null
+
+    return { lines, page, year }
   }
-</script> -->
+
+  function validateQuery(query) {
+    if (query === null || query === undefined) {
+      return [query, "Missing query"]
+    }
+    if (typeof query !== "object") {
+      return [query, `Expected an object, got ${typeof query}`]
+    }
+
+    query = {
+      ...query,
+    }
+    const remainingKeys = new Set(Object.keys(query))
+    const errors = {}
+
+    {
+      const key = "page"
+      remainingKeys.delete(key)
+      const [value, error] = validateChain([
+        validateString,
+        validateStringToNumber,
+        validateInteger,
+        validateTest(
+          value => value >= 1,
+          "Expected a number ≥ 1",
+        ),
+      ])(query[key])
+      query[key] = value
+      if (error !== null) {
+        errors[key] = error
+      }
+    }
+
+    {
+      const key = "year"
+      remainingKeys.delete(key)
+      const [value, error] = validateChain([
+        validateString,
+        validateStringToNumber,
+        validateInteger,
+        validateTest(
+          value => value >= 1700 && value < 2000,
+          "Expected a year between 1700 and 1999",
+        ),
+      ])(query[key])
+      query[key] = value
+      if (error !== null) {
+        errors[key] = error
+      }
+    }
+
+    for (let key of remainingKeys) {
+      errors[key] = "Unexpected entry"
+    }
+    return [query, Object.keys(errors).length === 0 ? null : errors]
+  }
+</script>
 
 <script>
   import { stores } from "@sapper/app"
   import fetch from "cross-fetch"
-  import { onMount } from "svelte"
 
   import Autocomplete from "../components/Autocomplete.svelte"
   import ValidUser from "../components/ValidUser.svelte"
@@ -36,10 +109,10 @@
   let errors = {}
   let fair = false
   let lineId = null
-  let lines = null
-  let page = 1
+  export let lines = null
+  export let page = 1
   let temporary = false
-  let year = 1930
+  export let year = 1930
 
   $: citySlug = cityName === null ? null : slugify(cityName)
 
@@ -283,19 +356,6 @@
       resetLineForm()
     }
   }
-
-  onMount(async () => {
-    const response = await fetch(`lines?page=${page}&year=${year}`, {
-      credentials: "same-origin",
-    })
-    lines = response.ok ? await response.json() : null
-  })
-
-  // async preload(/* { params, query } */) {
-  //   const { user } = this.store.get()
-  //   // TODO: Handle when user doesn't exist.
-  //   return {}
-  // },
 </script>
 
 <svelte:head>
