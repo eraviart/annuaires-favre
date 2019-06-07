@@ -460,15 +460,15 @@
                 <!-- <td>{line.year}</td>
                 <td>{line.page}</td> -->
                 <td>
-                  {line.districtName}
+                   {line.districtName}
                   <span class="text-gray-500">({line.districtId})</span>
                 </td>
                 <td>
-                  {line.cityName}
+                   {line.cityName}
                   <span class="text-gray-500">({line.cityId})</span>
                 </td>
                 <td>
-                  {line.corporationName}
+                   {line.corporationName}
                   <span class="text-gray-500">({line.corporationId})</span>
                 </td>
                 <td>{line.temporary ? '√' : ''}</td>
@@ -509,18 +509,28 @@
 
         <div class="my-2">
           <label for="districtName">Département</label>
-          <Autocomplete
-            className="appearance-none border focus:outline-none
-            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-            text-gray-700 w-full"
-            id="districtName"
-            items={districts}
-            name={districtName}
-            on:input={autocompleteDistrict}
-            on:select={districtSelected}
-            placeholder="Premières lettres d'un département…">
-            <div class="notification">Chargement des départements…</div>
-          </Autocomplete>
+          <div class="flex">
+            <Autocomplete
+              divClass="w-full"
+              id="districtName"
+              inputClass="appearance-none border focus:outline-none
+              focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+              text-gray-700 w-full"
+              items={districts}
+              name={districtName}
+              on:input={autocompleteDistrict}
+              on:select={districtSelected}
+              placeholder="Premières lettres d'un département…">
+              <div class="notification">Chargement des départements…</div>
+            </Autocomplete>
+            {#if districtId !== null}
+              <span
+                class="border leading-tight px-3 py-2 rounded shadow
+                text-gray-700">
+                 {districtId || ''}
+              </span>
+            {/if}
+          </div>
           {#if editErrors.districtName}
             <p
               class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
@@ -528,30 +538,33 @@
                {editErrors.districtName}
             </p>
           {/if}
-          {#if districtId !== null}
-            <span
-              class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-              w-full">
-               {districtId || ''}
-            </span>
-          {/if}
         </div>
 
         <div class="my-2">
           <label for="cityName">Commune</label>
-          <Autocomplete
-            className="appearance-none border focus:outline-none
-            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-            text-gray-700 w-full"
-            disabled={districtId === null}
-            id="cityName"
-            items={cities}
-            name={cityName}
-            on:input={autocompleteCity}
-            on:select={citySelected}
-            placeholder="Premières lettres d'une localité…">
-            <div class="notification">Chargement des localités…</div>
-          </Autocomplete>
+          <div class="flex">
+            <Autocomplete
+              divClass="w-full"
+              disabled={districtId === null}
+              id="cityName"
+              inputClass="appearance-none border focus:outline-none
+              focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+              text-gray-700 w-full"
+              items={cities}
+              name={cityName}
+              on:input={autocompleteCity}
+              on:select={citySelected}
+              placeholder="Premières lettres d'une localité…">
+              <div class="notification">Chargement des localités…</div>
+            </Autocomplete>
+            {#if cityId !== null}
+              <span
+                class="border leading-tight px-3 py-2 rounded shadow
+                text-gray-700">
+                 {cityId || ''}
+              </span>
+            {/if}
+          </div>
           {#if editErrors.cityName}
             <p
               class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
@@ -569,29 +582,32 @@
                 Créer « {cityName} »
               </button>
             {/if}
-          {:else}
-            <span
-              class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-              w-full">
-               {cityId || ''}
-            </span>
           {/if}
         </div>
 
         <div class="my-2">
           <label for="corporationName">Entreprise</label>
-          <Autocomplete
-            className="appearance-none border focus:outline-none
-            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-            text-gray-700 w-full"
-            id="corporationName"
-            items={corporations}
-            name={corporationName}
-            on:input={autocompleteCorporation}
-            on:select={corporationSelected}
-            placeholder="Premières lettres d'une entreprise…">
-            <div class="notification">Chargement des entreprises…</div>
-          </Autocomplete>
+          <div class="flex">
+            <Autocomplete
+              divClass="w-full"
+              id="corporationName"
+              inputClass="appearance-none border focus:outline-none
+              focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+              text-gray-700 w-full"
+              items={corporations}
+              name={corporationName}
+              on:input={autocompleteCorporation}
+              on:select={corporationSelected}
+              placeholder="Premières lettres d'une entreprise…">
+              <div class="notification">Chargement des entreprises…</div>
+            </Autocomplete>
+            {#if corporationId !== null}
+              <span
+                class="border leading-tight px-3 py-2 rounded shadow text-gray-700">
+                {corporationId || ''}
+              </span>
+            {/if}
+          </div>
           {#if editErrors.corporationName}
             <p
               class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
@@ -605,12 +621,6 @@
                 Créer « {corporationName} »
               </button>
             {/if}
-          {:else}
-            <span
-              class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-              w-full">
-               {corporationId || ''}
-            </span>
           {/if}
         </div>
 

@@ -8,12 +8,13 @@
     return s.replace(/[-\\^$*+?.()|[\]{}]/g, "\\$&")
   }
 
-  export let className = ""
   let currentItemIndex = -1
   export let disabled = false
+  export let divClass = ""
   let filteredItems = []
   export let fromStart = true // Default type ahead
   let hasFocus = false
+  export let inputClass = ""
   let inputField
   let isOpen = false
   export let items = []
@@ -146,11 +147,11 @@
 
 <svelte:window on:click={windowOnClick} on:keydown={windowOnKeyDown} />
 
-<div on:click|stopPropagation={() => {}}>
+<div class={divClass} on:click|stopPropagation={() => {}}>
   <input
     autocomplete="off"
     bind:this={inputField}
-    class={className}
+    class={inputClass}
     {disabled}
     {placeholder}
     {required}
