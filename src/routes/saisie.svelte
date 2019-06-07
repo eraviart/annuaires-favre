@@ -421,14 +421,16 @@
           type="number" />
       </div>
 
-      <div class="flex justify-end mt-4 py-2">
-        <button
-          class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
-          text-gray-100"
-          type="submit">
-          Rechercher
-        </button>
-      </div>
+      {#if year !== currentYear || page !== currentPage}
+        <div class="flex justify-end mt-4 py-2">
+          <button
+            class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
+            text-gray-100"
+            type="submit">
+            Rechercher
+          </button>
+        </div>
+      {/if}
     </form>
   </div>
 
