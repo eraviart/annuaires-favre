@@ -454,7 +454,7 @@
           <tbody>
             {#each lines as line, lineIndex (`line_${line.id}`)}
               <tr
-                class="{line.id === lineId ? 'bg-gray-900 text-gray-100' : lineIndex % 2 === 0 ? 'bg-white' : ''}
+                class="{line.id === lineId ? 'bg-gray-700 text-gray-100' : lineIndex % 2 === 0 ? 'bg-white' : ''}
                 border-b border-t"
                 on:click={() => toggleSelectLine(line)}>
                 <!-- <td>{line.year}</td>

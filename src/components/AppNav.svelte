@@ -40,7 +40,7 @@
 
 <nav
   aria-label="main navigation"
-  class="fixed flex items-top justify-between flex-wrap bg-gray-800 px-2
+  class="fixed flex items-top justify-between flex-wrap bg-gray-700 px-2
   text-gray-100 w-full z-10"
   role="navigation">
   <div class="flex flex-col flex-grow items-baseline my-1 md:flex-row">
@@ -117,7 +117,7 @@
               </button>
               {#if showUserMenu}
                 <ul
-                  class="absolute bg-gray-800 -mx-2 mt-10 p-2 right-0 rounded
+                  class="absolute bg-gray-700 -mx-2 mt-10 p-2 right-0 rounded
                   shadow-md text-center top-0 overflow-auto z-30"
                   style="min-width: 9rem;">
                   <li>

@@ -167,7 +167,7 @@
       on:mousedown|preventDefault={() => {}}>
       {#each filteredItems as result, index}
         <li
-          class="{index === currentItemIndex ? 'bg-gray-900 text-gray-100 ' : ''}
+          class="{index === currentItemIndex ? 'bg-gray-800 text-gray-100 ' : ''}
           hover:bg-gray-700 hover:text-gray-100 p-1"
           on:click={() => selectItem(index)}>
           {@html result.label}

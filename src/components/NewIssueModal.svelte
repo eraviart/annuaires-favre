@@ -41,7 +41,7 @@
 </script>
 
 <div class="fixed flex inset-0 z-50" role="dialog">
-  <div class="bg-gray-900 fixed opacity-75 inset-0 z-40" />
+  <div class="bg-gray-800 fixed opacity-75 inset-0 z-40" />
   <div
     class="bg-white flex flex-col m-auto max-h-full max-w-2xl sm:mt-16
     opacity-100 overflow-auto pb-4 pt-4 px-4 relative rounded shadow z-50">
