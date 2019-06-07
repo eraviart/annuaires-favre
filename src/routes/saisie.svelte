@@ -601,7 +601,8 @@
           {/if}
         </div>
 
-        <div class="my-2">
+        <fieldset class="my-2">
+          <legend>Ouverture</legend>
           <label>
             <input bind:checked={temporary} type="checkbox" />
             Bureau temporaire
@@ -610,10 +611,10 @@
             <input bind:checked={fair} type="checkbox" />
             Jours de foire
           </label>
-        </div>
+        </fieldset>
 
         <div class="my-2">
-          <label for="comment">Comment</label>
+          <label for="comment">Commentaire</label>
           <textarea
             bind:value={comment}
             class="appearance-none border focus:outline-none
@@ -632,6 +633,6 @@
           </button>
         </div>
       </form>
-    {/if}
-  </div>
+    </div>
+  {/if}
 </ValidUser>
