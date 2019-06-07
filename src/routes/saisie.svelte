@@ -430,55 +430,48 @@
         </button>
       </div>
     </form>
+  </div>
 
-    {#if year === currentYear && page === currentPage}
-      {#if lines !== null && lines.length > 0}
-        <table>
+  {#if year === currentYear && page === currentPage}
+    {#if lines !== null && lines.length > 0}
+      <div class="py-2">
+        <table class="border container mx-auto text-center">
           <thead>
-            <tr>
-              <th />
-              <th>Utilisateur</th>
-              <th>Année</th>
-              <th>Page</th>
+            <tr class="border-b border-t">
+              <!-- <th>Année</th>
+              <th>Page</th> -->
               <th>Département</th>
               <th>Localité</th>
               <th>Entreprise</th>
               <th>Temporaire</th>
               <th>Jours de foire</th>
               <th>Commentaire</th>
+              <th>Utilisateur</th>
             </tr>
           </thead>
           <tbody>
-            {#each lines as line}
+            {#each lines as line, lineIndex (`line_${line.id}`)}
               <tr
-                class={line.id === lineId ? 'bg-gray-900 text-gray-100' : ''}
+                class="{line.id === lineId ? 'bg-gray-900 text-gray-100' : lineIndex % 2 === 0 ? 'bg-white' : ''}
+                border-b border-t"
                 on:click={() => toggleSelectLine(line)}>
-                <td>
-                  {#if line.id === null}
-                    …
-                  {:else}
-                    <input
-                      checked={line.id === lineId}
-                      name="lineId"
-                      type="radio"
-                      value={line.id} />
-                  {/if}
-                </td>
-                <td>{line.userName}</td>
-                <td>{line.year}</td>
-                <td>{line.page}</td>
-                <td>{line.districtName}</td>
-                <td>{line.cityName}</td>
-                <td>{line.corporationName}</td>
+                <!-- <td>{line.year}</td>
+                <td>{line.page}</td> -->
+                <td>{line.districtName} <span class="text-gray-500">({line.districtId})</span></td>
+                <td>{line.cityName} <span class="text-gray-500">({line.cityId})</span></td>
+                <td>{line.corporationName} <span class="text-gray-500">({line.corporationId})</span></td>
                 <td>{line.temporary ? '√' : ''}</td>
                 <td>{line.fair ? '√' : ''}</td>
                 <td>{line.comment || ''}</td>
+                <td><span class="text-gray-500">{line.userName}</span></td>
               </tr>
             {/each}
           </tbody>
         </table>
-      {/if}
+      </div>
+    {/if}
 
+    <div class="container mx-auto md:w-2/3 lg:w-1/2">
       <form class="m-3" on:submit|preventDefault={submitEdit}>
         {#if editErrorCode}
           <section
