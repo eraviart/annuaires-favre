@@ -96,7 +96,7 @@ export default {
           require("tailwindcss"),
           require("postcss-preset-env")({ stage: 1 }),
           // Don't purge CSS in dev mode to be able to play with classes in the browser dev-tools.
-          !dev &&
+          !dev && false &&
             purgeCss({
               content: ["./src/**/*.svelte"],
               css: ["**/*.css"],
