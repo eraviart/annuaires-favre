@@ -459,13 +459,24 @@
                 on:click={() => toggleSelectLine(line)}>
                 <!-- <td>{line.year}</td>
                 <td>{line.page}</td> -->
-                <td>{line.districtName} <span class="text-gray-500">({line.districtId})</span></td>
-                <td>{line.cityName} <span class="text-gray-500">({line.cityId})</span></td>
-                <td>{line.corporationName} <span class="text-gray-500">({line.corporationId})</span></td>
+                <td>
+                  {line.districtName}
+                  <span class="text-gray-500">({line.districtId})</span>
+                </td>
+                <td>
+                  {line.cityName}
+                  <span class="text-gray-500">({line.cityId})</span>
+                </td>
+                <td>
+                  {line.corporationName}
+                  <span class="text-gray-500">({line.corporationId})</span>
+                </td>
                 <td>{line.temporary ? '√' : ''}</td>
                 <td>{line.fair ? '√' : ''}</td>
                 <td>{line.comment || ''}</td>
-                <td><span class="text-gray-500">{line.userName}</span></td>
+                <td>
+                  <span class="text-gray-500">{line.userName}</span>
+                </td>
               </tr>
             {/each}
           </tbody>
