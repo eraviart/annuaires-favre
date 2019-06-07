@@ -1,4 +1,7 @@
 <script context="module">
+  import { faExclamationTriangle } from "@fortawesome/free-solid-svg-icons/faExclamationTriangle"
+  import Icon from "fa-svelte"
+
   import {
     validateStringToNumber,
     validateChain,
@@ -394,24 +397,30 @@
     <h1 class="text-2xl">Saisie des lignes d'une page</h1>
 
     <form class="m-3" on:submit|preventDefault={submitSearch}>
-      <label for="year">Année</label>
-      <input
-        bind:value={year}
-        class="appearance-none border focus:outline-none focus:shadow-outline
-        leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-        id="year"
-        max={now.getFullYear()}
-        min="1600"
-        type="number" />
+      <div class="my-2">
+        <label for="year">Année</label>
+        <input
+          bind:value={year}
+          class="appearance-none border focus:outline-none focus:shadow-outline
+          leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
+          id="year"
+          max={now.getFullYear()}
+          min="1600"
+          required
+          type="number" />
+      </div>
 
-      <label for="page">Page</label>
-      <input
-        bind:value={page}
-        class="appearance-none border focus:outline-none focus:shadow-outline
-        leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-        id="page"
-        min="1"
-        type="number" />
+      <div class="my-2">
+        <label for="page">Page</label>
+        <input
+          bind:value={page}
+          class="appearance-none border focus:outline-none focus:shadow-outline
+          leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
+          id="page"
+          min="1"
+          required
+          type="number" />
+      </div>
 
       <div class="flex justify-end mt-4 py-2">
         <button
@@ -473,126 +482,154 @@
 
       <form class="m-3" on:submit|preventDefault={submitEdit}>
         {#if editErrorCode}
-          <p
-            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-            text-red-100 w-full">
-             {editErrorCode} {editErrorMessage || ''}
-          </p>
+          <section
+            class="bg-red-100 border-l-4 border-red-500 mx-auto my-4 p-4
+            text-red-500 md:w-2/3 lg:1/2">
+            <div class="flex mx-auto p-4">
+              <div class="mr-4">
+                <div
+                  class="h-10 w-10 text-red-100 bg-red-500 rounded-full flex
+                  justify-center items-center">
+                  <Icon icon={faExclamationTriangle} />
+                </div>
+              </div>
+              <div>
+                <p class="mb-2 font-bold">
+                   {editErrorCode} {editErrorMessage || ''}
+                </p>
+              </div>
+            </div>
+          </section>
         {/if}
 
-        <Autocomplete
-          className="appearance-none border focus:outline-none
-          focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-          text-gray-700 w-full"
-          items={districts}
-          name={districtName}
-          on:input={autocompleteDistrict}
-          on:select={districtSelected}
-          placeholder="Premières lettres d'un département…">
-          <div class="notification">Chargement des départements…</div>
-        </Autocomplete>
-        {#if editErrors.districtName}
-          <p
-            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-            text-red-100 w-full">
-             {editErrors.districtName}
-          </p>
-        {/if}
-        {#if districtId === null}
-          <p
-            class="bg-orange-600 border leading-tight px-3 py-2 rounded shadow
-            text-orange-100 w-full">
-            Un département est nécessaire au choix d'une localité.
-          </p>
-        {:else}
-          <span
-            class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-            w-full">
-             {districtId || ''}
-          </span>
-        {/if}
-
-        <Autocomplete
-          className="appearance-none border focus:outline-none
-          focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-          text-gray-700 w-full"
-          disabled={districtId === null}
-          items={cities}
-          name={cityName}
-          on:input={autocompleteCity}
-          on:select={citySelected}
-          placeholder="Premières lettres d'une localité…">
-          <div class="notification">Chargement des localités…</div>
-        </Autocomplete>
-        {#if editErrors.cityName}
-          <p
-            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-            text-red-100 w-full">
-             {editErrors.cityName}
-          </p>
-        {/if}
-        {#if cityId === null}
-          {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
-            <button on:click={createCity} type="button">
-              Créer « {cityName} »
-            </button>
+        <div class="my-2">
+          <label for="districtName">Département</label>
+          <Autocomplete
+            className="appearance-none border focus:outline-none
+            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+            text-gray-700 w-full"
+            id="districtName"
+            items={districts}
+            name={districtName}
+            on:input={autocompleteDistrict}
+            on:select={districtSelected}
+            placeholder="Premières lettres d'un département…">
+            <div class="notification">Chargement des départements…</div>
+          </Autocomplete>
+          {#if editErrors.districtName}
+            <p
+              class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+              text-red-100 w-full">
+               {editErrors.districtName}
+            </p>
           {/if}
-        {:else}
-          <span
-            class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-            w-full">
-             {cityId || ''}
-          </span>
-        {/if}
-
-        <Autocomplete
-          className="appearance-none border focus:outline-none
-          focus:shadow-outline leading-tight px-3 py-2 rounded shadow
-          text-gray-700 w-full"
-          items={corporations}
-          name={corporationName}
-          on:input={autocompleteCorporation}
-          on:select={corporationSelected}
-          placeholder="Premières lettres d'une entreprise…">
-          <div class="notification">Chargement des entreprises…</div>
-        </Autocomplete>
-        {#if editErrors.corporationName}
-          <p
-            class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
-            text-red-100 w-full">
-             {editErrors.corporationName}
-          </p>
-        {/if}
-        {#if corporationId === null}
-          {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
-            <button on:click={createCorporation} type="button">
-              Créer « {corporationName} »
-            </button>
+          {#if districtId !== null}
+            <span
+              class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+              w-full">
+               {districtId || ''}
+            </span>
           {/if}
-        {:else}
-          <span
-            class="border leading-tight px-3 py-2 rounded shadow text-gray-700
-            w-full">
-             {corporationId || ''}
-          </span>
-        {/if}
+        </div>
 
-        <label>
-          <input bind:checked={temporary} type="checkbox" />
-          Bureau temporaire
-        </label>
-        <label>
-          <input bind:checked={fair} type="checkbox" />
-          Jours de foire
-        </label>
+        <div class="my-2">
+          <label for="cityName">Commune</label>
+          <Autocomplete
+            className="appearance-none border focus:outline-none
+            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+            text-gray-700 w-full"
+            disabled={districtId === null}
+            id="cityName"
+            items={cities}
+            name={cityName}
+            on:input={autocompleteCity}
+            on:select={citySelected}
+            placeholder="Premières lettres d'une localité…">
+            <div class="notification">Chargement des localités…</div>
+          </Autocomplete>
+          {#if editErrors.cityName}
+            <p
+              class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+              text-red-100 w-full">
+               {editErrors.cityName}
+            </p>
+          {:else if districtId === null}
+            <p class="leading-tight px-3 py-2 text-orange-500">
+              Un département est nécessaire au choix d'une localité.
+            </p>
+          {/if}
+          {#if cityId === null}
+            {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
+              <button on:click={createCity} type="button">
+                Créer « {cityName} »
+              </button>
+            {/if}
+          {:else}
+            <span
+              class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+              w-full">
+               {cityId || ''}
+            </span>
+          {/if}
+        </div>
 
-        <label for="comment">Comment</label>
-        <textarea
-          bind:value={comment}
-          class="appearance-none border focus:outline-none focus:shadow-outline
-          leading-tight px-3 py-2 rounded shadow text-gray-700 w-full"
-          id="comment"
-          rows="4" />
+        <div class="my-2">
+          <label for="corporationName">Entreprise</label>
+          <Autocomplete
+            className="appearance-none border focus:outline-none
+            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+            text-gray-700 w-full"
+            id="corporationName"
+            items={corporations}
+            name={corporationName}
+            on:input={autocompleteCorporation}
+            on:select={corporationSelected}
+            placeholder="Premières lettres d'une entreprise…">
+            <div class="notification">Chargement des entreprises…</div>
+          </Autocomplete>
+          {#if editErrors.corporationName}
+            <p
+              class="bg-red-500 border leading-tight px-3 py-2 rounded shadow
+              text-red-100 w-full">
+               {editErrors.corporationName}
+            </p>
+          {/if}
+          {#if corporationId === null}
+            {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
+              <button on:click={createCorporation} type="button">
+                Créer « {corporationName} »
+              </button>
+            {/if}
+          {:else}
+            <span
+              class="border leading-tight px-3 py-2 rounded shadow text-gray-700
+              w-full">
+               {corporationId || ''}
+            </span>
+          {/if}
+        </div>
+
+        <div class="my-2">
+          <label>
+            <input bind:checked={temporary} type="checkbox" />
+            Bureau temporaire
+          </label>
+          <label>
+            <input bind:checked={fair} type="checkbox" />
+            Jours de foire
+          </label>
+        </div>
+
+        <div class="my-2">
+          <label for="comment">Comment</label>
+          <textarea
+            bind:value={comment}
+            class="appearance-none border focus:outline-none
+            focus:shadow-outline leading-tight px-3 py-2 rounded shadow
+            text-gray-700 w-full"
+            id="comment"
+            rows="4" />
+        </div>
 
         <div class="flex justify-end mt-4 py-2">
           <button
