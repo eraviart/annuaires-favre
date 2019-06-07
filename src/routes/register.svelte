@@ -67,7 +67,7 @@
       <button
         class="{canSubmit ? "bg-gray-600 hover:bg-gray-800" : "bg-gray-400"} font-bold px-4 py-2 rounded
         text-gray-100"
-        disabled={canSubmit}
+        disabled={!canSubmit}
         type="submit">
         Créer le compte
       </button>
