@@ -295,7 +295,7 @@
     console.assert(year === currentYear)
     console.assert(page === currentPage)
     const upsertedLine = {
-      id: null, // null means "upsert in progress".
+      id: null, // Set later.
       cityId,
       cityName,
       comment,
@@ -310,15 +310,6 @@
       userName: user.name,
       year,
     }
-    const updatedLines = [...lines]
-    if (lineId === null) {
-      updatedLines.push(upsertedLine)
-    } else {
-      const lineIndex = lines.findIndex(line => line.id === lineId)
-      console.assert(lineIndex >= 0)
-      updatedLines[lineIndex] = upsertedLine
-    }
-    lines = updatedLines
     const response = await fetch("upsert_line", {
       body: JSON.stringify(
         {
@@ -354,7 +345,15 @@
       editErrorMessage = error.message
       editErrors = { ...error.details }
     } else {
-      upsertedLine.id = result.id // Also modifies updatedLines.
+      upsertedLine.id = result.id
+      const updatedLines = [...lines]
+      if (lineId === null) {
+        updatedLines.push(upsertedLine)
+      } else {
+        const lineIndex = lines.findIndex(line => line.id === lineId)
+        console.assert(lineIndex >= 0)
+        updatedLines[lineIndex] = upsertedLine
+      }
       lines = updatedLines
       resetLineForm()
     }
