@@ -22,9 +22,9 @@
   const rightMenu = [
     {
       contentHtml: "À propos",
-      prefetch: true,
+      // prefetch: true,
       title: "Informations sur ce site web",
-      url: "a-propos",
+      url: "https://dfih.fr/about",
     },
   ]
   export let segment
