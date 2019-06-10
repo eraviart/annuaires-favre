@@ -36,7 +36,7 @@ export default {
         hydratable: true,
       }),
       resolve({
-        mainFields: ["browser", "module", "main"],
+        browser: true,
       }),
       commonjs(),
 
