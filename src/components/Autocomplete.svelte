@@ -14,6 +14,7 @@
   let filteredItems = []
   export let fromStart = true // Default type ahead
   let hasFocus = false
+  export let id = null
   export let inputClass = ""
   let inputField
   let isOpen = false
@@ -153,6 +154,7 @@
     bind:this={inputField}
     class={inputClass}
     {disabled}
+    {id}
     {placeholder}
     {required}
     on:blur={onBlur}
