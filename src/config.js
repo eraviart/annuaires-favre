@@ -1,8 +1,8 @@
 import { validateConfig } from "./validators/config"
 
 const config = {
-  missionStatement: "Saisie des annuaires Favre",
-  title: "Annuaires Favre",
+  missionStatement: "Edition of Favre yearbooks",
+  title: "Favre Yearbooks",
   url: ".",
 }
 

@@ -2,7 +2,7 @@ import { validateNonEmptyTrimmedString } from "./core"
 
 export function validateOracleConfig(database) {
   if (database === null || database === undefined) {
-    return [database, "Valeur manquante"]
+    return [database, "Missing value"]
   }
   if (typeof database !== "object") {
     return [database, `Expected an object got "${typeof database}"`]

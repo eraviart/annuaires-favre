@@ -8,7 +8,7 @@ import {
 
 function validateDb(db) {
   if (db === null || db === undefined) {
-    return [db, "Valeur manquante"]
+    return [db, "Missing value"]
   }
   if (typeof db !== "object") {
     return [db, `Expected an object got "${typeof db}"`]
@@ -51,7 +51,7 @@ function validateDb(db) {
 
 function validateGitLab(gitlab) {
   if (gitlab === null || gitlab === undefined) {
-    return [gitlab, "Valeur manquante"]
+    return [gitlab, "Missing value"]
   }
   if (typeof gitlab !== "object") {
     return [gitlab, `Expected an object got "${typeof gitlab}"`]

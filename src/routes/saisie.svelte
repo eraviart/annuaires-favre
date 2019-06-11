@@ -407,11 +407,11 @@
 
 <ValidUser>
   <div class="container mx-auto md:w-2/3 lg:w-1/2">
-    <h1 class="text-2xl">Saisie des lignes d'une page</h1>
+    <h1 class="text-2xl">Saisie des lignes d'une page <span class="text-gray-600">/ Edition of the lines in a page</span></h1>
 
     <form class="m-3" on:submit|preventDefault={submitSearch}>
       <div class="my-2">
-        <label for="year">Année</label>
+        <label for="year">Année <span class="text-gray-600">/ Year</span></label>
         <input
           bind:value={year}
           class="appearance-none border focus:outline-none focus:shadow-outline
@@ -441,7 +441,7 @@
             class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
             text-gray-100"
             type="submit">
-            Rechercher
+            Rechercher <span class="text-gray-300">/ Search</span>
           </button>
         </div>
       {/if}
@@ -452,17 +452,28 @@
     {#if lines !== null && lines.length > 0}
       <div class="py-2">
         <table class="border container mx-auto text-center">
-          <thead>
-            <tr class="border-b border-t">
+          <thead class="border-b border-t">
+            <tr>
               <!-- <th>Année</th>
               <th>Page</th> -->
               <th>Département</th>
               <th>Localité</th>
-              <th>Entreprise</th>
+              <th>Banque</th>
               <th>Temporaire</th>
               <th>Jours de foire</th>
               <th>Commentaire</th>
               <th>Utilisateur</th>
+            </tr>
+            <tr class="text-gray-600">
+              <!-- <th>Year</th>
+              <th>Page</th> -->
+              <th>District</th>
+              <th>City</th>
+              <th>Bank</th>
+              <th>Temporary</th>
+              <th>Fair Days</th>
+              <th>Comment</th>
+              <th>Username</th>
             </tr>
           </thead>
           <tbody>
@@ -522,7 +533,7 @@
         {/if}
 
         <div class="my-2">
-          <label for="districtName">Département</label>
+          <label for="districtName">Département <span class="text-gray-600">/ District</span></label>
           <div class="flex">
             <Autocomplete
               divClass="w-full"
@@ -555,7 +566,7 @@
         </div>
 
         <div class="my-2">
-          <label for="cityName">Commune</label>
+          <label for="cityName">Commune <span class="text-gray-600">/ City</span></label>
           <div class="flex">
             <Autocomplete
               divClass="w-full"
@@ -571,7 +582,17 @@
               placeholder="Premières lettres d'une localité…">
               <div class="notification">Chargement des localités…</div>
             </Autocomplete>
-            {#if cityId !== null}
+            {#if cityId === null}
+              {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
+                <button
+                  class="border border-red-600 hover:border-red-800 leading-tight ml-1
+                  px-3 py-2 rounded shadow text-red-600 hover:text-red-800"
+                  on:click={createCity}
+                  type="button">
+                  Créer <span class="text-red-400">/ New</span> « {cityName} »
+                </button>
+              {/if}
+            {:else}
               <span
                 class="border leading-tight px-3 py-2 rounded shadow
                 text-gray-700">
@@ -588,19 +609,13 @@
           {:else if districtId === null}
             <p class="leading-tight px-3 py-2 text-orange-500">
               Un département est nécessaire au choix d'une localité.
+              <span class="text-orange-400">A district is needed to be able to choose a city</span>
             </p>
-          {/if}
-          {#if cityId === null}
-            {#if districtId !== null && citySlug && !cities.some(city => slugify(city.name) === citySlug)}
-              <button on:click={createCity} type="button">
-                Créer « {cityName} »
-              </button>
-            {/if}
           {/if}
         </div>
 
         <div class="my-2">
-          <label for="corporationName">Entreprise</label>
+          <label for="corporationName">Banque <span class="text-gray-600">/ Bank</span></label>
           <div class="flex">
             <Autocomplete
               divClass="w-full"
@@ -615,7 +630,17 @@
               placeholder="Premières lettres d'une entreprise…">
               <div class="notification">Chargement des entreprises…</div>
             </Autocomplete>
-            {#if corporationId !== null}
+            {#if corporationId === null}
+              {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
+                <button
+                  class="border border-red-600 hover:border-red-800 leading-tight ml-1
+                  px-3 py-2 rounded shadow text-red-600 hover:text-red-800"
+                  on:click={createCorporation}
+                  type="button">
+                  Créer <span class="text-red-400">/ New</span> « {corporationName} »
+                </button>
+              {/if}
+            {:else}
               <span
                 class="border leading-tight px-3 py-2 rounded shadow text-gray-700">
                 {corporationId || ''}
@@ -629,29 +654,22 @@
                {editErrors.corporationName}
             </p>
           {/if}
-          {#if corporationId === null}
-            {#if corporationSlug && !corporations.some(corporation => slugify(corporation.name) === corporationSlug)}
-              <button on:click={createCorporation} type="button">
-                Créer « {corporationName} »
-              </button>
-            {/if}
-          {/if}
         </div>
 
         <fieldset class="my-2">
-          <legend>Ouverture</legend>
+          <legend>Ouverture <span class="text-gray-600">/ Opening</span></legend>
           <label>
             <input bind:checked={temporary} type="checkbox" />
-            Bureau temporaire
+            Bureau temporaire <span class="text-gray-600">/ Temporary Office</span>
           </label>
           <label>
             <input bind:checked={fair} type="checkbox" />
-            Jours de foire
+            Jours de foire <span class="text-gray-600">/ Fair Days</span>
           </label>
         </fieldset>
 
         <div class="my-2">
-          <label for="comment">Commentaire</label>
+          <label for="comment">Commentaire <span class="text-gray-600">/ Comment</span> </label>
           <textarea
             bind:value={comment}
             class="appearance-none border focus:outline-none
@@ -666,7 +684,11 @@
             class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
             text-gray-100"
             type="submit">
-            {#if lineId === null}Ajouter{:else}Modifier{/if}
+            {#if lineId === null
+              }Ajouter <span class="text-gray-300">/ Add</span>{
+            :else
+              }Modifier <span class="text-gray-300">/ Update</span>{
+            /if}
           </button>
         </div>
       </form>

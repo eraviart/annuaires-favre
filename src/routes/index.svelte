@@ -42,7 +42,7 @@
       class="w-1/2 mx-auto block"
       src="dfih-logo-150x74.png"
       alt="Logo de DFIH" />
-    <h1 class="text-3xl">Interface de saisie en ligne des pages des annuaires Favre</h1>
+    <h1 class="text-3xl">Online interface to enter the text of Favre yearbooks</h1>
   </article>
   {#if years.length === 0}
     <section
@@ -57,8 +57,8 @@
           </div>
         </div>
         <div>
-          <p class="mb-2 font-bold">Bienvenue !</p>
-          <p>Aucune année n'a encore été saisie.</p>
+          <p class="mb-2 font-bold">Welcom!</p>
+          <p>No year has been entered yet.</p>
         </div>
       </div>
       <div class="flex justify-end mt-4 py-2">
@@ -66,7 +66,7 @@
           class="bg-orange-500 hover:bg-orange-700 font-bold px-4 py-2 rounded
           text-orange-100"
           href="saisie">
-          Commencer la saisie
+          Begin edition
         </a>
       </div>
     </section>
@@ -83,12 +83,12 @@
                   <li><a href="saisie?year={year}&page={page}">{page}</a></li>
                 {/each}
               </ul>
-              <div class="flex justify-start mt-4 py-2">
+              <div class="flex justify-start py-2">
                 <a
                   class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
                   text-gray-100"
                   href="saisie?year={year}&page={Math.max(...pages, 0) + 1}">
-                  Nouvelle page
+                  New page
                 </a>
               </div>
             </div>
@@ -101,7 +101,7 @@
         class="bg-gray-600 hover:bg-gray-800 font-bold px-4 py-2 rounded
         text-gray-100"
         href="saisie?year={Math.max(...years, 1929) + 1}">
-        Nouvelle année
+        New year
       </a>
     </div>
   {/if}

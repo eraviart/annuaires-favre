@@ -37,20 +37,20 @@
 </script>
 
 <svelte:head>
-  <title>Inscription | {config.title}</title>
+  <title>Registration | {config.title}</title>
 </svelte:head>
 
 <div class="mx-auto px-2 w-full md:w-1/2 lg:w-1/3">
-  <h1 class="text-2xl text-center">Création de compte</h1>
+  <h1 class="text-2xl text-center">Account Creation</h1>
 
   <ListErrors {errors} />
 
-  <form on:submit|preventDefault={submit}>
+  <form class="mt-4" on:submit|preventDefault={submit}>
     <input
       class="appearance-none border leading-tight my-2 focus:outline-none px-3
       py-2 rounded shadow focus:shadow-outline w-full"
       name="username"
-      placeholder="Nom"
+      placeholder="Username"
       required
       type="text"
       bind:value={username} />
@@ -58,18 +58,18 @@
       class="appearance-none border leading-tight my-2 focus:outline-none px-3
       py-2 rounded shadow focus:shadow-outline w-full"
       name="password"
-      placeholder="Mot de passe"
+      placeholder="Password"
       required
       type="password"
       bind:value={password} />
     <div class="flex items-baseline justify-between mt-6">
-      <a class="link" href="/login">Utiliser un compte existant</a>
+      <a class="link" href="/login">Use an existing account</a>
       <button
         class="{canSubmit ? "bg-gray-600 hover:bg-gray-800" : "bg-gray-400"} font-bold px-4 py-2 rounded
         text-gray-100"
         disabled={!canSubmit}
         type="submit">
-        Créer le compte
+        Sign up
       </button>
     </div>
   </form>

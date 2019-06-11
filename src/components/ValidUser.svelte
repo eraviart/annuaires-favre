@@ -22,8 +22,8 @@
         </div>
       </div>
       <div>
-        <p class="mb-2 font-bold">Identification nécessaire</p>
-        <p>Vous devez vous connecter pour pouvoir saisir.</p>
+        <p class="mb-2 font-bold">Authentication needed</p>
+        <p>You need to sign in to be able to edit.</p>
       </div>
     </div>
     <div class="flex justify-end mt-4 py-2">
@@ -32,7 +32,7 @@
         text-orange-100"
         href="login">
         <Icon icon={faSignInAlt} />
-         Connexion
+        Sign in
       </a>
     </div>
   </section>

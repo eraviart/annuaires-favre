@@ -37,11 +37,11 @@
 </script>
 
 <svelte:head>
-  <title>Authentification | {config.title}</title>
+  <title>Authentication | {config.title}</title>
 </svelte:head>
 
 <div class="mx-auto px-2 w-full md:w-1/2 lg:w-1/3">
-  <h1 class="text-2xl text-center">Identification</h1>
+  <h1 class="text-2xl text-center">Authentication</h1>
 
   <ListErrors {errors} />
 
@@ -50,7 +50,7 @@
       class="appearance-none border leading-tight my-2 focus:outline-none px-3
       py-2 rounded shadow focus:shadow-outline w-full"
       name="username"
-      placeholder="Nom"
+      placeholder="Username"
       required
       type="text"
       bind:value={username} />
@@ -58,18 +58,18 @@
       class="appearance-none border leading-tight my-2 focus:outline-none px-3
       py-2 rounded shadow focus:shadow-outline w-full"
       name="password"
-      placeholder="Mot de passe"
+      placeholder="Password"
       required
       type="password"
       bind:value={password} />
     <div class="flex items-baseline justify-between mt-6">
-      <a class="link" href="/register">Créer un nouveau compte</a>
+      <a class="link" href="/register">Create a new account</a>
       <button
         class="{canSubmit ? "bg-gray-600 hover:bg-gray-800" : "bg-gray-400"} font-bold px-4 py-2 rounded
         text-gray-100"
         disabled={!canSubmit}
         type="submit">
-        M'identifier
+        Sign in
       </button>
     </div>
   </form>

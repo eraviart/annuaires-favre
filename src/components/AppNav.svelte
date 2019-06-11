@@ -13,17 +13,17 @@
   const dispatch = createEventDispatcher()
   const leftMenu = [
     {
-      contentHtml: "Accueil",
+      contentHtml: "Home",
       prefetch: true,
-      title: "TODO",
+      title: "Landing page",
       url: ".",
     },
   ]
   const rightMenu = [
     {
-      contentHtml: "À propos",
+      contentHtml: "About",
       // prefetch: true,
-      title: "Informations sur ce site web",
+      title: "Informations on this web site",
       url: "https://dfih.fr/about",
     },
   ]
@@ -104,7 +104,7 @@
               showMainMenu = false
               dispatch('openNewIssueModal')
             }}>
-            Signaler un problème
+            Report an issue
           </span>
         </span>
         <span class="inline-flex">
@@ -123,7 +123,7 @@
                   <li>
                     <a href="logout" on:click|preventDefault={logout}>
                       <Icon icon={faSignOutAlt} />
-                       Déconnexion
+                      Sign out
                     </a>
                   </li>
                 </ul>
@@ -138,7 +138,7 @@
               on:click={() => (showMainMenu = false)}
               rel="prefetch">
               <Icon icon={faSignInAlt} />
-               Connexion
+              Sign in
             </a>
           {/if}
         </span>

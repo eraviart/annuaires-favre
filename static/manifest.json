@@ -1,6 +1,6 @@
 {
   "background_color": "#ffffff",
-  "description": "Saisie des annuaires Favre",
+  "description": "Edition of Favre Yearbooks",
   "display": "minimal-ui",
   "icons": [
     {
@@ -14,8 +14,8 @@
       "type": "image/png"
     }
   ],
-  "lang": "fr",
-  "name": "Annuaires Favre",
+  "lang": "en",
+  "name": "Favre Yearbooks",
   "short_name": "Favre",
   "start_url": "/?utm_source=homescreen",
   "theme_color": "#aa1e1e"

@@ -5,7 +5,7 @@ const urlRegExp = /^(?:(?:(?:https?|ftp):)?\/\/)(?:\S+(?::\S*)?@)?(?:(?!(?:10|12
 export function validateArray(itemValidator) {
   return function(array) {
     if (array === null || array === undefined) {
-      return [array, "Valeur manquante"]
+      return [array, "Missing value"]
     }
     if (!Array.isArray(array)) {
       return [array, `Expected an array, got "${typeof array}"`]
@@ -30,7 +30,7 @@ export function validateArray(itemValidator) {
 
 export function validateBoolean(value) {
   if (value === null || value === undefined) {
-    return [value, "Valeur manquante"]
+    return [value, "Missing value"]
   }
   if (typeof value !== "boolean") {
     return [value, `Expected a boolean, got "${typeof value}"`]
@@ -92,7 +92,7 @@ export function validateFunction(func) {
 
 export function validateInteger(value) {
   if (value === null || value === undefined) {
-    return [value, "Valeur manquante"]
+    return [value, "Missing value"]
   }
   if (!Number.isInteger(value)) {
     return [value, `Expected an integer, got "${typeof value}"`]
@@ -116,7 +116,7 @@ export function validateMissing(value) {
 
 export function validateNonEmpty(value) {
   if (value === null || value === undefined) {
-    return [value, "Valeur manquante"]
+    return [value, "Missing value"]
   }
   if (Array.isArray(value)) {
     if (value.length === 0) {
@@ -140,7 +140,7 @@ export function validateNonEmptyTrimmedString(value) {
 
 export function validateStringToNumber(value) {
   if (value === null || value === undefined) {
-    return [value, "Valeur manquante"]
+    return [value, "Missing value"]
   }
   const number = Number(value)
   if (isNaN(number)) {
@@ -199,7 +199,7 @@ export function validateStrictEqual(expected) {
 
 export function validateString(value) {
   if (value === null || value === undefined) {
-    return [value, "Valeur manquante"]
+    return [value, "Missing value"]
   }
   if (typeof value !== "string") {
     return [value, `Expected a string, got "${typeof value}"`]
@@ -234,7 +234,7 @@ export function validateTuple(tupleValidator) {
 
   return function(array) {
     if (array === null || array === undefined) {
-      return [array, "Valeur manquante"]
+      return [array, "Missing value"]
     }
     if (!Array.isArray(array)) {
       return [array, `Expected an array, got "${typeof array}"`]
