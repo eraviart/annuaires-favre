@@ -71,7 +71,7 @@
       </div>
     </section>
   {:else}
-    <h2 class="text-2xl">Années</h2>
+    <h2 class="text-2xl">Years</h2>
     <ul class="list-disc list-inside">
       {#each years as year}
         <li>
