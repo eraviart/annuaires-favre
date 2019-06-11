@@ -87,7 +87,7 @@ export async function post(req, res) {
         $<corporationName>,
         $<slug>,
         '1000-01-01',
-        '3999-12-30',
+        '3999-12-30'
       )
     `,
     {
