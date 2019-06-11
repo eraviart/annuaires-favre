@@ -21,7 +21,29 @@ async function main() {
       for (let row of rows) {
         await db.none(
           `
-            INSERT INTO corporations VALUES ($1, $2, $3, $4)
+            INSERT INTO corporations VALUES ($1, $2, $3, $4, false)
+          `,
+          row,
+        )
+      }
+    }
+
+    // Mark banks.
+    {
+      const rows = (await connection.execute(
+        `
+          SELECT DISTINCT sc.corporation
+          FROM stock_category sca
+          JOIN stock_corporation sc ON sca.stock = sc.stock
+          WHERE sca.category BETWEEN 1650 AND 1658
+        `,
+      )).rows
+      for (let row of rows) {
+        await db.none(
+          `
+            UPDATE corporations
+            SET bank = true
+            WHERE id = $1
           `,
           row,
         )
@@ -46,9 +68,9 @@ async function main() {
         await db.none(
           `
             INSERT INTO corporation_names
-              VALUES ($1, $2, $7, $3, $4, $5, $6)
-              ON CONFLICT
-              DO NOTHING
+            VALUES ($1, $2, $7, $3, $4, $5, $6)
+            ON CONFLICT
+            DO NOTHING
           `,
           row,
         )
@@ -72,9 +94,9 @@ async function main() {
         await db.none(
           `
             INSERT INTO corporation_names
-              VALUES ($1, $2, $6, $3, $4, $5, null)
-              ON CONFLICT
-              DO NOTHING
+            VALUES ($1, $2, $6, $3, $4, $5, null)
+            ON CONFLICT
+            DO NOTHING
           `,
           row,
         )

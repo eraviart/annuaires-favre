@@ -60,11 +60,13 @@ export async function post(req, res) {
     `
       INSERT INTO corporations (
         startdate,
-        enddate
+        enddate,
+        bank
       )
       VALUES (
         '1000-01-01',
-        '3999-12-30'
+        '3999-12-30',
+        true
       )
       RETURNING id
     `,

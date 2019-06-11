@@ -144,6 +144,20 @@
   $: corporationSlug =
     corporationName === null ? null : slugify(corporationName)
 
+  async function autocompleteBank({ detail: term }) {
+    editErrors = { ...editErrors }
+    delete editErrors.corporationName
+    corporationId = null
+    corporationName = term
+    const response = await fetch(
+      `autocomplete_bank?q=${encodeURIComponent(term)}`,
+      {
+        credentials: "same-origin",
+      },
+    )
+    corporations = response.ok ? await response.json() : []
+  }
+
   async function autocompleteCity({ detail: term }) {
     editErrors = { ...editErrors }
     delete editErrors.cityName
@@ -160,19 +174,19 @@
     cities = response.ok ? await response.json() : []
   }
 
-  async function autocompleteCorporation({ detail: term }) {
-    editErrors = { ...editErrors }
-    delete editErrors.corporationName
-    corporationId = null
-    corporationName = term
-    const response = await fetch(
-      `autocomplete_corporation?q=${encodeURIComponent(term)}`,
-      {
-        credentials: "same-origin",
-      },
-    )
-    corporations = response.ok ? await response.json() : []
-  }
+  // async function autocompleteCorporation({ detail: term }) {
+  //   editErrors = { ...editErrors }
+  //   delete editErrors.corporationName
+  //   corporationId = null
+  //   corporationName = term
+  //   const response = await fetch(
+  //     `autocomplete_corporation?q=${encodeURIComponent(term)}`,
+  //     {
+  //       credentials: "same-origin",
+  //     },
+  //   )
+  //   corporations = response.ok ? await response.json() : []
+  // }
 
   async function autocompleteDistrict({ detail: term }) {
     editErrors = { ...editErrors }
@@ -596,7 +610,7 @@
               text-gray-700 w-full"
               items={corporations}
               name={corporationName}
-              on:input={autocompleteCorporation}
+              on:input={autocompleteBank}
               on:select={corporationSelected}
               placeholder="Premières lettres d'une entreprise…">
               <div class="notification">Chargement des entreprises…</div>

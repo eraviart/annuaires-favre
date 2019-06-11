@@ -95,33 +95,54 @@ async function main() {
     }
 
     if (
-      !(await db.one(
+      (await db.one(
         `
-        SELECT EXISTS(
-          SELECT *
-          FROM corporation_names
-          WHERE
-            corporation = $<bankId>
-            AND name = $<bankName>
-        )
-      `,
+          SELECT EXISTS(
+            SELECT *
+            FROM corporation_names
+            WHERE
+              corporation = $<bankId>
+              AND name = $<bankName>
+          )
+        `,
         entry,
       )).exists
     ) {
+      await db.none(
+        `
+          UPDATE corporations
+          SET
+            bank = true
+          WHERE
+            id = $<bankId>
+        `,
+        entry,
+      )
+    } else {
       if (
         (await db.one(
           `
-          SELECT EXISTS(
-            SELECT *
-            FROM corporations
-            WHERE
-              id = $<bankId>
-          )
-        `,
+            SELECT EXISTS(
+              SELECT *
+              FROM corporations
+              WHERE
+                id = $<bankId>
+            )
+          `,
           entry,
         )).exists
       ) {
         console.log(`Adding name ${bankName} to bank ${bankId}…`)
+        await db.none(
+          `
+            UPDATE corporations
+            SET
+              bank = true
+            WHERE
+              id = $<bankId>
+          `,
+          entry,
+        )
       } else {
         console.log(`Creating bank ${bankId} with name ${bankName}…`)
         await db.none(
@@ -131,7 +152,8 @@ async function main() {
               $<bankId>,
               $<startDate>,
               $<endDate>,
-              'Annuaire Favre'
+              'Annuaire Favre',
+              true
             )
           `,
           entry,

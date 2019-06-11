@@ -70,7 +70,8 @@ async function configureDatabase() {
         id serial NOT NULL PRIMARY KEY,
         startdate date NOT NULL,
         enddate date NOT NULL,
-        source varchar(2000)
+        source varchar(2000),
+        bank boolean NOT NULL DEFAULT false
       )
     `,
   )

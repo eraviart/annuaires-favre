@@ -56,7 +56,8 @@ async function main() {
           $<id>,
           $<startdate>,
           $<enddate>,
-          'Banque fictive pour faciliter la saisie'
+          'Banque fictive pour faciliter la saisie',
+          true
         )
         ON CONFLICT
         DO NOTHING
