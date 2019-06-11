@@ -42,7 +42,7 @@
       class="w-1/2 mx-auto block"
       src="dfih-logo-150x74.png"
       alt="Logo de DFIH" />
-    <h1 class="text-3xl">Online interface to enter the text of Favre yearbooks</h1>
+    <h1 class="text-3xl">Online interface to edit the text of Favre yearbooks</h1>
   </article>
   {#if years.length === 0}
     <section
